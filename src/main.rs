@@ -44,6 +44,10 @@ fn main() {
             let result = fair::games::hilo::simulate(client_seed, server_seed, nonce);
             println!("{}", result);
         }
+        "blackjack" => {
+            let result = fair::games::blackjack::simulate(client_seed, server_seed, nonce);
+            println!("{}", result);
+        }
         _ => {
             eprintln!("{} is not a supported game.", game);
             process::exit(1);

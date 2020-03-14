@@ -51,6 +51,7 @@ Work In Progress... more coming!
 - Dice
 - Limbo
 - Hilo
+- Blackjack
 
 ## Rust API docs
 

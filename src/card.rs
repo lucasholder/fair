@@ -143,9 +143,9 @@ impl fmt::Display for Deck {
 }
 
 impl Deck {
-    pub fn from_rng(rng: &mut ProvablyFairRNG<f64>) -> Deck {
+    pub fn from_rng(rng: &mut ProvablyFairRNG<f64>, count: u32) -> Deck {
         let mut cards: Vec<Card> = vec![];
-        for _ in 0..52 {
+        for _ in 0..count {
             let card = Card::random(rng);
             cards.push(card);
         }

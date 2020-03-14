@@ -25,7 +25,7 @@ impl fmt::Display for SimulationResult {
 
 pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationResult {
     let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
-    let deck = Deck::from_rng(&mut rng);
+    let deck = Deck::from_rng(&mut rng, 52);
 
     SimulationResult { deck }
 }
