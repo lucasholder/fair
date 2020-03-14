@@ -1,4 +1,4 @@
-//! # provably fair dice game
+//! # provably fair limbo game
 //!
 
 pub use crate::rng::ProvablyFairRNG;

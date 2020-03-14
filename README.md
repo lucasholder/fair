@@ -50,6 +50,7 @@ Work In Progress... more coming!
 - Baccarat
 - Dice
 - Limbo
+- Hilo
 
 ## Rust API docs
 

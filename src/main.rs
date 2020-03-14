@@ -15,7 +15,7 @@ fn main() {
     )
     .get_matches();
 
-    let game = matches.value_of("game").unwrap();
+    let game = matches.value_of("game").unwrap().to_lowercase();
     let client_seed = matches.value_of("client_seed").unwrap();
     let server_seed = matches.value_of("server_seed").unwrap();
 
@@ -27,7 +27,7 @@ fn main() {
     println!("Nonce: {}", nonce);
     println!("");
 
-    match game {
+    match game.as_str() {
         "baccarat" => {
             let result = fair::games::baccarat::simulate(client_seed, server_seed, nonce);
             println!("{}", result);
@@ -38,6 +38,10 @@ fn main() {
         }
         "limbo" => {
             let result = fair::games::limbo::simulate(client_seed, server_seed, nonce);
+            println!("{}", result);
+        }
+        "hilo" => {
+            let result = fair::games::hilo::simulate(client_seed, server_seed, nonce);
             println!("{}", result);
         }
         _ => {

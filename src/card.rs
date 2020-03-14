@@ -125,6 +125,35 @@ impl Card {
     }
 }
 
+#[derive(Debug)]
+pub struct Deck {
+    cards: Vec<Card>,
+}
+
+impl fmt::Display for Deck {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = self
+            .cards
+            .iter()
+            .map(|c| c.to_string())
+            .collect::<Vec<String>>()
+            .join(" - ");
+        write!(f, "{}", s)
+    }
+}
+
+impl Deck {
+    pub fn from_rng(rng: &mut ProvablyFairRNG<f64>) -> Deck {
+        let mut cards: Vec<Card> = vec![];
+        for _ in 0..52 {
+            let card = Card::random(rng);
+            cards.push(card);
+        }
+
+        Deck { cards }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
