@@ -46,13 +46,13 @@ mod test {
     use super::*;
 
     #[test]
-    fn simulate_hilo_1() {
+    fn simulate_blackjack() {
         let client_seed = "client seed";
         let server_seed = "server seed";
         let nonce = 1;
         let result = simulate(client_seed, server_seed, nonce);
         // println!("{:?}", result);
 
-        assert_eq!(format!("{}", result), "");
+        assert_eq!(format!("{}", result), "Dealer: ♥5 - ♣K\nPlayer: ♠J - ♥10\nDeck: ♥9 - ♥K - ♠10 - ♥10 - ♦A - ♠3 - ♠2 - ♣J - ♠A - ♥A - ♣5 - ♦A - ♥A - ♥J - ♦2 - ♣4 - ♦Q - ♠4 - ♣6 - ♣J - ♣2 - ♦7 - ♣9 - ♦6 - ♥2 - ♥8 - ♦Q - ♥8 - ♥10 - ♠10 - ♦Q - ♣7 - ♥8 - ♦2 - ♣9 - ♥4 - ♦10 - ♥2 - ♣7 - ♥10 - ♣Q - ♠Q - ♠9 - ♣A - ♥J - ♣6 - ♣8 - ♦J");
     }
 }
