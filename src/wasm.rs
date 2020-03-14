@@ -19,6 +19,6 @@ pub fn greet() {
 */
 
 #[wasm_bindgen]
-pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> String {
-    crate::games::baccarat::simulate(client_seed, server_seed, nonce).to_string()
+pub fn simulate(game: &str, client_seed: &str, server_seed: &str, nonce: u64) -> String {
+    crate::simulate(game, client_seed, server_seed, nonce).unwrap_or_default()
 }
