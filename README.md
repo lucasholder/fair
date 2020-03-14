@@ -48,6 +48,7 @@ As expected, we get the same result as on
 Work In Progress... more coming!
 
 - Baccarat
+- Dice
 
 ## Rust API docs
 

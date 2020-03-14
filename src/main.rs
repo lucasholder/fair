@@ -28,12 +28,17 @@ fn main() {
     println!("");
 
     let result = match game {
-        "baccarat" => fair::games::baccarat::simulate(client_seed, server_seed, nonce),
+        "baccarat" => {
+            let result = fair::games::baccarat::simulate(client_seed, server_seed, nonce);
+            println!("{}", result);
+        }
+        "dice" => {
+            let result = fair::games::dice::simulate(client_seed, server_seed, nonce);
+            println!("{}", result);
+        }
         _ => {
             eprintln!("{} is not a supported game.", game);
             process::exit(1);
         }
     };
-
-    println!("{}", result);
 }
