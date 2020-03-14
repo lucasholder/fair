@@ -27,13 +27,17 @@ fn main() {
     println!("Nonce: {}", nonce);
     println!("");
 
-    let result = match game {
+    match game {
         "baccarat" => {
             let result = fair::games::baccarat::simulate(client_seed, server_seed, nonce);
             println!("{}", result);
         }
         "dice" => {
             let result = fair::games::dice::simulate(client_seed, server_seed, nonce);
+            println!("{}", result);
+        }
+        "limbo" => {
+            let result = fair::games::limbo::simulate(client_seed, server_seed, nonce);
             println!("{}", result);
         }
         _ => {

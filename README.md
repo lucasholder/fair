@@ -49,6 +49,7 @@ Work In Progress... more coming!
 
 - Baccarat
 - Dice
+- Limbo
 
 ## Rust API docs
 
