@@ -27,30 +27,13 @@ fn main() {
     println!("Nonce: {}", nonce);
     println!("");
 
-    match game.as_str() {
-        "baccarat" => {
-            let result = fair::games::baccarat::simulate(client_seed, server_seed, nonce);
-            println!("{}", result);
-        }
-        "dice" => {
-            let result = fair::games::dice::simulate(client_seed, server_seed, nonce);
-            println!("{}", result);
-        }
-        "limbo" => {
-            let result = fair::games::limbo::simulate(client_seed, server_seed, nonce);
-            println!("{}", result);
-        }
-        "hilo" => {
-            let result = fair::games::hilo::simulate(client_seed, server_seed, nonce);
-            println!("{}", result);
-        }
-        "blackjack" => {
-            let result = fair::games::blackjack::simulate(client_seed, server_seed, nonce);
-            println!("{}", result);
-        }
-        _ => {
-            eprintln!("{} is not a supported game.", game);
+    let result = fair::simulate(game.as_str(), client_seed, server_seed, nonce);
+
+    match result {
+        Ok(s) => println!("{}", s),
+        Err(s) => {
+            eprintln!("{}", s);
             process::exit(1);
         }
-    };
+    }
 }
