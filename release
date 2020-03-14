@@ -1,0 +1,4 @@
+# we have to build from scratch to ensure version in binary will be
+# updated
+rm -rf target/;
+cargo release $@;

@@ -1,0 +1,58 @@
+[package]
+name = "fair"
+version = "0.0.1"
+authors = ["Lucas Holder <lucasholderx@gmail.com>"]
+edition = "2018"
+description = "CLI tool and library for verifying provably fair games (baccarat, etc.)."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/lucasholder/fair.git"
+keywords = ["provably-fair", "baccarat", "gambling"]
+categories = ["cryptography", "command-line-utilities"]
+
+# wasm
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# wasm
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+clap = "^2.33"
+hmac = "^0.7.1"
+sha2 = "^0.8.1"
+
+# wasm
+wasm-bindgen = "0.2"
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.1", optional = true }
+
+# `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
+# compared to the default allocator's ~10K. It is slower than the default
+# allocator, however.
+#
+# Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
+wee_alloc = { version = "0.4.2", optional = true }
+
+[dev-dependencies]
+bencher = "0.1.5"
+wasm-bindgen-test = "0.2"
+
+# wasm
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
+
+[[bin]]
+name = "fair"
+path = "src/main.rs"
+
+[[bench]]
+name = "benches"
+path = "benches/main.rs"
+harness = false
