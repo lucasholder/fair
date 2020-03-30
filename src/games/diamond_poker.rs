@@ -18,11 +18,13 @@
 */
 
 pub use crate::rng::ProvablyFairRNG;
+use std::cmp;
+use std::collections::HashMap;
 use std::fmt;
 
 static GEM_ORDER: [Gem; 7] = [Green, Purple, Yellow, Red, Cyan, Orange, Blue];
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Gem {
     Green,
     Purple,
@@ -37,23 +39,107 @@ pub enum Gem {
 pub enum Outcome {
     PlayerWin,
     DealerWin,
-    Tie,
+    Draw,
+}
+
+impl fmt::Display for Outcome {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::PlayerWin => "Player Wins",
+                Self::DealerWin => "Dealer Wins",
+                Self::Draw => "Draw",
+            }
+        )
+    }
 }
 
 use Gem::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Hand {
     gems: Vec<Gem>,
+    hand_type: HandType,
 }
+
+#[derive(Debug, PartialEq, Eq)]
+enum HandType {
+    Nothing,
+    Pair,
+    TwoPairs,
+    ThreeOfAKind,
+    FullHouse,
+    FourOfAKind, // TODO: 5 of a kind??
+}
+
+impl HandType {
+    fn to_ranking(&self) -> usize {
+        match self {
+            Nothing => 0,
+            Pair => 1,
+            TwoPairs => 2,
+            ThreeOfAKind => 3,
+            FullHouse => 4,
+            FourOfAKind => 5,
+        }
+    }
+}
+
+impl fmt::Display for HandType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
+        write!(
+            f,
+            "{}",
+            match self {
+                Nothing => "Nothing",
+                Pair => "Pair",
+                TwoPairs => "2 Pairs",
+                ThreeOfAKind => "3 Of A Kind",
+                FullHouse => "Full House",
+                FourOfAKind => "4 Of A Kind",
+            }
+        )
+    }
+}
+
+use HandType::*;
 
 impl Hand {
     fn new() -> Hand {
         Hand {
             gems: Vec::with_capacity(5),
+            hand_type: Nothing,
         }
     }
-    fn analyze(&self) {}
+
+    fn analyze(&mut self) {
+        let count = self.gems.iter().fold(HashMap::new(), |mut acc, gem| {
+            *acc.entry(gem).or_insert(0) += 1;
+            acc
+        });
+        let pair_count = count.iter().filter(|(_, &val)| val == 2).count();
+        let triple_count = count.iter().filter(|(_, &val)| val == 3).count();
+        let quadruple_count = count.iter().filter(|(_, &val)| val >= 4).count();
+
+        let hand_type = if quadruple_count == 1 {
+            FourOfAKind
+        } else if pair_count == 1 && triple_count == 1 {
+            FullHouse
+        } else if triple_count == 1 {
+            ThreeOfAKind
+        } else if pair_count == 2 {
+            TwoPairs
+        } else if pair_count == 1 {
+            Pair
+        } else {
+            Nothing
+        };
+        self.hand_type = hand_type;
+    }
 }
 
 impl fmt::Display for Hand {
@@ -67,14 +153,17 @@ impl fmt::Display for Hand {
 pub struct SimulationResult {
     pub dealer: Hand,
     pub player: Hand,
-    // pub outcome: Outcome
-    // pub winner: Winner,
+    pub outcome: Outcome, // pub winner: Winner,
 }
 
 impl fmt::Display for SimulationResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
-        write!(f, "Dealer: {}\nPlayer: {}", self.dealer, self.player)
+        write!(
+            f,
+            "Dealer ({}): {}\nPlayer ({}): {}\nOutcome: {}",
+            self.dealer.hand_type, self.dealer, self.player.hand_type, self.player, self.outcome
+        )
     }
 }
 
@@ -93,6 +182,7 @@ fn draw_hand(rng: &mut ProvablyFairRNG<f64>) -> Hand {
         let idx = (rng.next().unwrap() * 7.) as usize;
         hand.gems.push(GEM_ORDER[idx]);
     }
+    hand.analyze();
     hand
 }
 
@@ -121,11 +211,20 @@ pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationR
     // let winner = evaluate_winner(dealer, player);
 
     // let outcome = (rng.next().unwrap() * 10001.) as u32;
-    // let outcome = outcome as f64 / 100.;
+    let outcome = match player
+        .hand_type
+        .to_ranking()
+        .cmp(&dealer.hand_type.to_ranking())
+    {
+        cmp::Ordering::Greater => Outcome::PlayerWin,
+        cmp::Ordering::Less => Outcome::DealerWin,
+        cmp::Ordering::Equal => Outcome::Draw,
+    };
+
     SimulationResult {
         dealer,
         player,
-        // winner,
+        outcome,
     }
 }
 
@@ -140,12 +239,11 @@ mod test {
         let nonce = 1;
         let result = simulate(client_seed, server_seed, nonce);
         // println!("{:?}", result);
-        assert_eq!(result.dealer, [Orange, Cyan, Purple, Blue, Red]);
-        assert_eq!(result.player, [Blue, Cyan, Cyan, Blue, Green]);
+        assert_eq!(result.dealer.gems, vec![Orange, Cyan, Purple, Blue, Red]);
+        assert_eq!(result.player.gems, vec![Blue, Cyan, Cyan, Blue, Green]);
         // assert_eq!(result.winner, Winner::Player);
-        let nonce = 2;
-        let result = simulate(client_seed, server_seed, nonce);
-        // println!("{:?}", result);
+        // let mut nonce = 2;
+        // TODO: more tests
         // assert_eq!(result.outcome, 53.86);
     }
 }
