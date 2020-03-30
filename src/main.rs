@@ -14,6 +14,7 @@ fn main() {
              possible_value[limbo]
              possible_value[hilo]
              possible_value[blackjack]
+             possible_value[diamond_poker]
              "Game")
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
