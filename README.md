@@ -45,13 +45,22 @@ As expected, we get the same result as on
 
 ## Supported Games
 
-Work In Progress... more coming!
+Work In Progress... more game support coming!
 
-- Baccarat
-- Dice
-- Limbo
-- Hilo
-- Blackjack
+- [x] Blackjack
+- [x] Hilo
+- [x] Baccarat
+- [ ] Diamond Poker
+- [x] Dice Roll
+- [x] Limbo
+- [ ] Plinko
+- [ ] Roulette Roll
+- [ ] Keno
+- [ ] Mines
+- [ ] Video Poker
+- [ ] Wheel
+- [ ] Slots
+- [ ] Crash
 
 ## Rust API docs
 
