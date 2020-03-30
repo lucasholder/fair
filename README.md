@@ -50,7 +50,7 @@ Work In Progress... more game support coming!
 - [x] Blackjack
 - [x] Hilo
 - [x] Baccarat
-- [ ] Diamond Poker
+- [x] Diamond Poker
 - [x] Dice Roll
 - [x] Limbo
 - [ ] Plinko
