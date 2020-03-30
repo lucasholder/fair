@@ -8,7 +8,7 @@ use std::error::Error; use std::fs;
 */
 
 use crate::card::Card;
-pub use crate::rng::ProvablyFairRNG;
+pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
 
 use std::cmp::Ordering;
 use std::fmt;
@@ -129,20 +129,15 @@ fn sum_cards_banker(steps: &Vec<Step>) -> u32 {
 /// # Example
 ///
 /// ```
-///
-/// let client_seed = "some client seed";
-/// let server_seed = "some server seed";
-/// let nonce = 1;
-/// let result = fair::games::baccarat::simulate(
-///   client_seed,
-///   server_seed,
-///   nonce,
-/// );
+/// use fair::{games, ProvablyFairConfig};
+/// // client seed, server seed, nonce
+/// let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
+/// let result = games::baccarat::simulate(config);
 /// // assert_eq!(result, vec!["todo", "todo"]);
 /// ```
 ///
-pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationResult {
-    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
+pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
+    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::from_config(config);
 
     // keep track of drawn cards
     let mut steps: Vec<Step> = vec![];
@@ -225,10 +220,8 @@ mod test {
 
     #[test]
     fn simulate_five_cards_drawn() {
-        let client_seed = "some client seed";
-        let server_seed = "some server seed";
-        let nonce = 2;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("some client seed", "some server seed", 2);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.outcome, Outcome::Banker);
 
@@ -246,10 +239,8 @@ mod test {
 
     #[test]
     fn simulate_four_cards_drawn() {
-        let client_seed = "some client seed";
-        let server_seed = "some server seed";
-        let nonce = 1;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.totals.player, 9);
         assert_eq!(result.totals.banker, 9);

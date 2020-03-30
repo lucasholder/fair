@@ -9,10 +9,24 @@ use std::marker::PhantomData;
 // Create alias for HMAC-SHA256
 type HmacSha256 = Hmac<Sha256>;
 
-pub struct ProvablyFairRNG<T> {
+pub struct ProvablyFairConfig {
     client_seed: String,
     server_seed: String,
     nonce: u64,
+}
+
+impl ProvablyFairConfig {
+    pub fn new(client_seed: &str, server_seed: &str, nonce: u64) -> ProvablyFairConfig {
+        ProvablyFairConfig {
+            client_seed: client_seed.to_string(),
+            server_seed: server_seed.to_string(),
+            nonce,
+        }
+    }
+}
+
+pub struct ProvablyFairRNG<T> {
+    config: ProvablyFairConfig,
     current_round: u64,
     current_round_cursor: usize,
     current_round_mac: Option<GenericArray<u8, U32>>,
@@ -48,23 +62,33 @@ pub struct ProvablyFairRNG<T> {
 ///
 ///
 impl<T> ProvablyFairRNG<T> {
-    pub fn new(client_seed: &str, server_seed: &str, nonce: u64) -> ProvablyFairRNG<T> {
-        return ProvablyFairRNG {
-            client_seed: client_seed.to_string(),
-            server_seed: server_seed.to_string(),
-            nonce,
+    pub fn from_config(config: ProvablyFairConfig) -> ProvablyFairRNG<T> {
+        ProvablyFairRNG {
+            config,
             // TODO: group this under iter field?
             current_round: 0,
             current_round_cursor: 0,
             current_round_mac: None,
             rng_type: PhantomData,
+        }
+    }
+
+    pub fn new(client_seed: &str, server_seed: &str, nonce: u64) -> ProvablyFairRNG<T> {
+        let config = ProvablyFairConfig {
+            client_seed: client_seed.to_string(),
+            server_seed: server_seed.to_string(),
+            nonce,
         };
+        Self::from_config(config)
     }
 
     fn update_current_round_buffer(&mut self) {
         // Create HMAC-SHA256 instance which implements `Mac` trait
-        let key = self.server_seed.as_bytes();
-        let input = format!("{}:{}:{}", self.client_seed, self.nonce, self.current_round);
+        let key = self.config.server_seed.as_bytes();
+        let input = format!(
+            "{}:{}:{}",
+            self.config.client_seed, self.config.nonce, self.current_round
+        );
 
         let mut mac =
             HmacSha256::new_varkey(key).expect("HMAC can take key of any size, never errors here");

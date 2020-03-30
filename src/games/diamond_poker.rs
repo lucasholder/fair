@@ -17,7 +17,7 @@
   and the second 5 are assigned to the player.
 */
 
-pub use crate::rng::ProvablyFairRNG;
+pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
 use std::cmp;
 use std::collections::HashMap;
 use std::fmt;
@@ -191,19 +191,14 @@ fn draw_hand(rng: &mut ProvablyFairRNG<f64>) -> Hand {
 /// # Example
 ///
 /// ```
+/// use fair::{games, ProvablyFairConfig};
 ///
-/// let client_seed = "some client seed";
-/// let server_seed = "some server seed";
-/// let nonce = 1;
-/// let result = fair::games::diamond_poker::simulate(
-///   client_seed,
-///   server_seed,
-///   nonce,
-/// );
+/// let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
+/// let result = games::diamond_poker::simulate(config);
 /// ```
 ///
-pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationResult {
-    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
+pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
+    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::from_config(config);
 
     let dealer = draw_hand(&mut rng);
     let player = draw_hand(&mut rng);
@@ -234,10 +229,8 @@ mod test {
 
     #[test]
     fn simulate_dice_roll() {
-        let client_seed = "client seed";
-        let server_seed = "server seed";
-        let nonce = 1;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("client seed", "server seed", 1);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.dealer.gems, vec![Orange, Cyan, Purple, Blue, Red]);
         assert_eq!(result.player.gems, vec![Blue, Cyan, Cyan, Blue, Green]);

@@ -58,15 +58,43 @@ fn main() {
     println!("Nonce: {}", nonce);
     println!("");
 
-    if let (game, Some(_)) = matches.subcommand() {
-        let result = fair::simulate(game, client_seed, server_seed, nonce);
+    match matches.subcommand() {
+        ("plinko", Some(sub_matches)) => {
+            let risk = sub_matches.value_of("risk").unwrap_or("low");
+            let rows: u8 = sub_matches
+                .value_of("rows")
+                .unwrap_or("8")
+                .parse()
+                .unwrap_or(8);
 
-        match result {
-            Ok(s) => println!("{}", s),
-            Err(s) => {
-                eprintln!("{}", s);
-                process::exit(1);
+            // let result = fair::simulate("plinko", client_seed, server_seed, nonce);
+
+            /*
+            match result {
+                Ok(s) => println!("{}", s),
+                Err(s) => {
+                    eprintln!("{}", s);
+                    process::exit(1);
+                }
             }
+            */
+        }
+        (game, Some(_)) => {
+            // let result = fair::simulate(game, client_seed, server_seed, nonce);
+
+            /*
+            match result {
+                Ok(s) => println!("{}", s),
+                Err(s) => {
+                    eprintln!("{}", s);
+                    process::exit(1);
+                }
+            }
+            */
+        }
+        _ => {
+            eprintln!("This should never happen!");
+            process::exit(1);
         }
     }
 }

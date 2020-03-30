@@ -6,14 +6,14 @@
 use std::env;
 use std::error::Error; use std::fs;
 */
-use std::process;
+// use std::process;
 
 mod card;
 pub mod games;
 mod rng;
 mod wasm;
 
-pub use rng::ProvablyFairRNG;
+pub use rng::{ProvablyFairConfig, ProvablyFairRNG};
 
 pub fn simulate(
     game: &str,
@@ -21,33 +21,34 @@ pub fn simulate(
     server_seed: &str,
     nonce: u64,
 ) -> Result<String, String> {
+    let config = ProvablyFairConfig::new(client_seed, server_seed, nonce);
     let result_str = match game {
         "baccarat" => {
-            let result = games::baccarat::simulate(client_seed, server_seed, nonce);
+            let result = games::baccarat::simulate(config);
             format!("{}", result)
         }
         "dice" => {
-            let result = games::dice::simulate(client_seed, server_seed, nonce);
+            let result = games::dice::simulate(config);
             format!("{}", result)
         }
         "limbo" => {
-            let result = games::limbo::simulate(client_seed, server_seed, nonce);
+            let result = games::limbo::simulate(config);
             format!("{}", result)
         }
         "hilo" => {
-            let result = games::hilo::simulate(client_seed, server_seed, nonce);
+            let result = games::hilo::simulate(config);
             format!("{}", result)
         }
         "blackjack" => {
-            let result = games::blackjack::simulate(client_seed, server_seed, nonce);
+            let result = games::blackjack::simulate(config);
             format!("{}", result)
         }
         "diamond_poker" => {
-            let result = games::diamond_poker::simulate(client_seed, server_seed, nonce);
+            let result = games::diamond_poker::simulate(config);
             format!("{}", result)
         }
         "plinko" => {
-            let result = games::plinko::simulate(client_seed, server_seed, nonce);
+            let result = games::plinko::simulate(config);
             format!("{}", result)
         }
         _ => {

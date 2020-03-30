@@ -1,22 +1,21 @@
-//! # provably fair diamond poker
+//! # provably fair plinko
 //!
 
 /*
-    For any game of Plinko, the generated outcome is based on the path of the falling ball. The
-    game event determines the direction of the falling ball for each level in the falling process.
-    Players can choose between 8 and 16 pins of play, which determines the number of game events
-    required to generate a complete path from top to bottom. Since there are only two possible
-    directions (left or right) the translation is done by multiplying each float by 2, which maps
-    to the following index:
+For any game of Plinko, the generated outcome is based on the path of the falling ball. The
+game event determines the direction of the falling ball for each level in the falling process.
+Players can choose between 8 and 16 pins of play, which determines the number of game events
+required to generate a complete path from top to bottom. Since there are only two possible
+directions (left or right) the translation is done by multiplying each float by 2, which maps
+to the following index:
 
-    // Index of 0 to 1 : left to right
-    const DIRECTIONS = [ left, right ];
+// Index of 0 to 1 : left to right
+const DIRECTIONS = [ left, right ];
 
-    // Game event translation
-    const direction = CARDS[Math.floor(float * 2)];
-*/
+// Game event translation
+const direction = CARDS[Math.floor(float * 2)]; */
 
-pub use crate::rng::ProvablyFairRNG;
+pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
 use std::cmp;
 use std::collections::HashMap;
 use std::fmt;
@@ -190,19 +189,14 @@ fn draw_hand(rng: &mut ProvablyFairRNG<f64>) -> Hand {
 /// # Example
 ///
 /// ```
+/// use fair::{games, ProvablyFairConfig};
 ///
-/// let client_seed = "some client seed";
-/// let server_seed = "some server seed";
-/// let nonce = 1;
-/// let result = fair::games::diamond_poker::simulate(
-///   client_seed,
-///   server_seed,
-///   nonce,
-/// );
+/// let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
+/// let result = games::plinko::simulate(config);
 /// ```
 ///
-pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationResult {
-    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
+pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
+    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::from_config(config);
 
     let dealer = draw_hand(&mut rng);
     let player = draw_hand(&mut rng);
@@ -233,16 +227,10 @@ mod test {
 
     #[test]
     fn simulate_dice_roll() {
-        let client_seed = "client seed";
-        let server_seed = "server seed";
-        let nonce = 1;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("client seed", "server seed", 1);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.dealer.gems, vec![Orange, Cyan, Purple, Blue, Red]);
         assert_eq!(result.player.gems, vec![Blue, Cyan, Cyan, Blue, Green]);
-        // assert_eq!(result.winner, Winner::Player);
-        // let mut nonce = 2;
-        // TODO: more tests
-        // assert_eq!(result.outcome, 53.86);
     }
 }

@@ -1,7 +1,7 @@
 //! # provably fair dice game
 //!
 
-pub use crate::rng::ProvablyFairRNG;
+pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
 use std::fmt;
 
 #[derive(Debug)]
@@ -19,19 +19,14 @@ impl fmt::Display for SimulationResult {
 /// # Example
 ///
 /// ```
+/// use fair::{games, ProvablyFairConfig};
 ///
-/// let client_seed = "some client seed";
-/// let server_seed = "some server seed";
-/// let nonce = 1;
-/// let result = fair::games::dice::simulate(
-///   client_seed,
-///   server_seed,
-///   nonce,
-/// );
+/// let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
+/// let result = games::dice::simulate(config);
 /// ```
 ///
-pub fn simulate(client_seed: &str, server_seed: &str, nonce: u64) -> SimulationResult {
-    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
+pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
+    let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::from_config(config);
 
     let outcome = (rng.next().unwrap() * 10001.) as u32;
     let outcome = outcome as f64 / 100.;
@@ -44,14 +39,12 @@ mod test {
 
     #[test]
     fn simulate_dice_roll() {
-        let client_seed = "client seed";
-        let server_seed = "server seed";
-        let nonce = 1;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("client seed", "server seed", 1);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.outcome, 74.67);
-        let nonce = 2;
-        let result = simulate(client_seed, server_seed, nonce);
+        let config = ProvablyFairConfig::new("client seed", "server seed", 2);
+        let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.outcome, 53.86);
     }
