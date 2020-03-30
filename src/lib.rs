@@ -46,6 +46,10 @@ pub fn simulate(
             let result = games::diamond_poker::simulate(client_seed, server_seed, nonce);
             format!("{}", result)
         }
+        "plinko" => {
+            let result = games::plinko::simulate(client_seed, server_seed, nonce);
+            format!("{}", result)
+        }
         _ => {
             return Err(format!("{} is not a supported game.", game));
         }
