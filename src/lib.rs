@@ -15,11 +15,13 @@ mod wasm;
 
 pub use rng::{ProvablyFairConfig, ProvablyFairRNG};
 
-pub fn simulate(
+/*
+pub fn simulate<T>(
     game: &str,
     client_seed: &str,
     server_seed: &str,
     nonce: u64,
+    opts: Option<T>,
 ) -> Result<String, String> {
     let config = ProvablyFairConfig::new(client_seed, server_seed, nonce);
     let result_str = match game {
@@ -48,7 +50,7 @@ pub fn simulate(
             format!("{}", result)
         }
         "plinko" => {
-            let result = games::plinko::simulate(config);
+            let result = games::plinko::simulate(config, None);
             format!("{}", result)
         }
         _ => {
@@ -57,3 +59,4 @@ pub fn simulate(
     };
     Ok(result_str)
 }
+*/

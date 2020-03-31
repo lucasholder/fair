@@ -22,6 +22,7 @@ default = ["console_error_panic_hook"]
 clap = "^2.33"
 hmac = "^0.7.1"
 sha2 = "^0.8.1"
+num-integer = "0.1"
 
 # wasm
 wasm-bindgen = "0.2"

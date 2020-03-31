@@ -1,6 +1,8 @@
 use clap::*;
-use fair;
 use std::process;
+
+use fair::games::*;
+use fair::ProvablyFairConfig;
 
 // TODO: implement game as subcommands? cause plinko games has some additional parameters (e.g.
 // risk and rows)
@@ -31,12 +33,16 @@ fn main() {
         )
         (@subcommand plinko =>
             (about: "Plinko game")
-            (@arg risk:
+            (@arg risk: --risk +takes_value
                  possible_value[low]
                  possible_value[medium]
                  possible_value[high]
                  "Risk")
-            (@arg rows: "Rows")
+            (@arg rows:
+                 --rows
+                 +takes_value
+                 {validate_plinko_rows}
+                 "Rows")
         )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
@@ -58,43 +64,44 @@ fn main() {
     println!("Nonce: {}", nonce);
     println!("");
 
-    match matches.subcommand() {
+    let config = ProvablyFairConfig::new(client_seed, server_seed, nonce);
+
+    let res = match matches.subcommand() {
+        ("baccarat", _) => baccarat::simulate(config).to_string(),
+        ("dice", _) => dice::simulate(config).to_string(),
+        ("limbo", _) => limbo::simulate(config).to_string(),
+        ("hilo", _) => hilo::simulate(config).to_string(),
+        ("blackjack", _) => blackjack::simulate(config).to_string(),
+        ("diamond_poker", _) => diamond_poker::simulate(config).to_string(),
         ("plinko", Some(sub_matches)) => {
+            let rows: u8 = value_t!(sub_matches, "rows", u8).unwrap_or_else(|e| e.exit());
             let risk = sub_matches.value_of("risk").unwrap_or("low");
-            let rows: u8 = sub_matches
-                .value_of("rows")
-                .unwrap_or("8")
-                .parse()
-                .unwrap_or(8);
 
-            // let result = fair::simulate("plinko", client_seed, server_seed, nonce);
+            let risk = match risk {
+                "low" => plinko::Risk::Low,
+                "medium" => plinko::Risk::Medium,
+                "high" => plinko::Risk::High,
+                _ => panic!("Uknown risk {}", risk),
+            };
 
-            /*
-            match result {
-                Ok(s) => println!("{}", s),
-                Err(s) => {
-                    eprintln!("{}", s);
-                    process::exit(1);
-                }
-            }
-            */
+            let opts = plinko::Opts::new(rows, risk);
+            plinko::simulate(config, Some(opts)).to_string()
         }
-        (game, Some(_)) => {
-            // let result = fair::simulate(game, client_seed, server_seed, nonce);
+        _ => die("This branch should never execute. Unimplemented game?"),
+    };
+    println!("{}", res);
+}
 
-            /*
-            match result {
-                Ok(s) => println!("{}", s),
-                Err(s) => {
-                    eprintln!("{}", s);
-                    process::exit(1);
-                }
-            }
-            */
-        }
-        _ => {
-            eprintln!("This should never happen!");
-            process::exit(1);
-        }
+fn validate_plinko_rows(rows: String) -> std::result::Result<(), String> {
+    let rows: u8 = rows.parse().unwrap_or(0);
+    if rows >= 8 && rows <= 16 {
+        Ok(())
+    } else {
+        Err("must be between 8 to 16 inclusive".to_string())
     }
+}
+
+fn die(msg: &str) -> ! {
+    eprintln!("{}", msg);
+    process::exit(1);
 }

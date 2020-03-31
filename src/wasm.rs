@@ -18,7 +18,9 @@ pub fn greet() {
 }
 */
 
+/*
 #[wasm_bindgen]
 pub fn simulate(game: &str, client_seed: &str, server_seed: &str, nonce: u64) -> String {
-    crate::simulate(game, client_seed, server_seed, nonce).unwrap_or_default()
+    crate::simulate(game, client_seed, server_seed, nonce, None as Option<()>).unwrap_or_default()
 }
+*/
