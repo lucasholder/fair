@@ -71,7 +71,7 @@ Work In Progress... more game support coming!
 - [x] Plinko
 - [x] Roulette Roll
 - [x] Keno
-- [ ] Mines
+- [x] Mines
 - [ ] Video Poker
 - [ ] Wheel
 - [ ] Slots

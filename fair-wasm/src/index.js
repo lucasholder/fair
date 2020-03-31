@@ -9,6 +9,7 @@ export const allGames = [
   ["Diamond Poker", "diamond_poker"],
   ["Roulette", "roulette"],
   ["Plinko", "plinko"],
+  ["Mines", "mines"],
 ];
 
 export function simulate(game, client_seed, server_seed, nonce, opts = {}) {

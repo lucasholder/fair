@@ -37,18 +37,25 @@ fn main() {
         (@subcommand plinko =>
             (about: "Plinko game")
             (@arg risk: --risk +takes_value
+                 default_value("low")
                  possible_value[low]
                  possible_value[medium]
                  possible_value[high]
                  "Risk")
-            (@arg rows:
-                 --rows
-                 +takes_value
+            (@arg rows: --rows +takes_value
+                 default_value("8")
                  {validate_plinko_rows}
                  "Rows")
         )
         (@subcommand keno =>
             (about: "Keno")
+        )
+        (@subcommand mines =>
+            (about: "Mines game")
+            (@arg mines: --mines +takes_value
+                 default_value("3")
+                 {validate_mines_mines}
+                 "Number of Mines")
         )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
@@ -95,6 +102,10 @@ fn main() {
             plinko::simulate(config, Some(opts)).to_string()
         }
         ("keno", _) => keno::simulate(config).to_string(),
+        ("mines", Some(sub_matches)) => {
+            let mines: u8 = value_t!(sub_matches, "mines", u8).unwrap_or_else(|e| e.exit());
+            mines::simulate(config, mines).to_string()
+        }
         _ => die("This branch should never execute. Unimplemented game?"),
     };
     println!("{}", res);
@@ -106,6 +117,15 @@ fn validate_plinko_rows(rows: String) -> std::result::Result<(), String> {
         Ok(())
     } else {
         Err("must be between 8 to 16 inclusive".to_string())
+    }
+}
+
+fn validate_mines_mines(mines: String) -> std::result::Result<(), String> {
+    let mines: u8 = mines.parse().unwrap_or(0);
+    if mines >= 1 && mines <= 24 {
+        Ok(())
+    } else {
+        Err("must be between 1 to 24 inclusive".to_string())
     }
 }
 

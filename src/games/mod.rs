@@ -5,5 +5,6 @@ pub mod dice;
 pub mod hilo;
 pub mod keno;
 pub mod limbo;
+pub mod mines;
 pub mod plinko;
 pub mod roulette;
