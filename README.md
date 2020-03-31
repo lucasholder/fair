@@ -2,9 +2,10 @@
 
 CLI tool and library for verifying provably fair games. Compatible with Stake's [provably fair algorithms](https://stake.com/provably-fair/overview).
 
+[![crates.io](https://meritbadge.herokuapp.com/fair)](https://crates.io/crates/fair)
+[![documentation](https://docs.rs/fair/badge.svg)](https://docs.rs/fair)
 [![Build Status](https://travis-ci.org/lucasholder/fair.svg?branch=master)](https://travis-ci.org/lucasholder/fair)
 [![Build Status Appveyor](https://ci.appveyor.com/api/projects/status/github/lucasholder/fair)](https://ci.appveyor.com/project/lucasholder/fair)
-[![crates.io](https://meritbadge.herokuapp.com/fair)](https://crates.io/crates/fair)
 
 ## Install
 
