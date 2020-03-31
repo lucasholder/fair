@@ -8,5 +8,6 @@ pub mod limbo;
 pub mod mines;
 pub mod plinko;
 pub mod roulette;
+pub mod slots;
 pub mod video_poker;
 pub mod wheel;

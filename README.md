@@ -74,7 +74,7 @@ Work In Progress... more game support coming!
 - [x] Mines
 - [x] Video Poker
 - [x] Wheel
-- [ ] Slots
+- [x] Slots
 - [ ] Crash
 
 ## Rust API docs

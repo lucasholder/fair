@@ -14,8 +14,7 @@ fn main() {
         (author: crate_authors!())
         (about: crate_description!())
         (@subcommand baccarat =>
-            (about: "Baccarat game")
-        )
+            (about: "Baccarat game"))
         (@subcommand dice =>
             (about: "Dice game")
         )
@@ -77,6 +76,12 @@ fn main() {
                  possible_value("50")
                  "Segments")
         )
+        (@subcommand slots =>
+            (about: "Slots game(s)")
+            (@arg round: --round +takes_value
+                 default_value("0")
+                 "Round #")
+        )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
         (@arg nonce: +required "Nonce (positive integer)")
@@ -133,6 +138,10 @@ fn main() {
             let risk = wheel::Risk::from_str(risk);
             let opts = wheel::Opts::new(segments, risk);
             wheel::simulate(config, Some(opts)).to_string()
+        }
+        ("slots", Some(sub_matches)) => {
+            let round: usize = value_t!(sub_matches, "round", usize).unwrap_or_else(|e| e.exit());
+            slots::simulate(config, round).to_string()
         }
         _ => die("This branch should never execute. Unimplemented game?"),
     };

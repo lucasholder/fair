@@ -159,6 +159,16 @@ fn bytes_to_float(bytes: &[u8]) -> f64 {
         .0
 }
 
+// TODO: use that function everywhere we are picking a number in a range
+impl ProvablyFairRNG<f64> {
+    // get a random number in [start, end[ range
+    pub fn range(&mut self, start: usize, end: usize) -> usize {
+        assert!(end > start);
+        let range = (end as i32 - start as i32) as usize;
+        (self.next().unwrap() * range as f64) as usize + start as usize
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
