@@ -81,6 +81,7 @@ pub fn simulate(
             // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
             res
         }
+        "video_poker" => video_poker::simulate(config).to_string(),
         _ => panic!("This branch should never execute. Unimplemented game?"),
     };
     result

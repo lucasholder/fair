@@ -10,6 +10,7 @@ export const allGames = [
   ["Roulette", "roulette"],
   ["Plinko", "plinko"],
   ["Mines", "mines"],
+  ["Video Poker", "video_poker"],
 ];
 
 export function simulate(game, client_seed, server_seed, nonce, opts = {}) {

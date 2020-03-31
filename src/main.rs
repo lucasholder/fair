@@ -57,6 +57,9 @@ fn main() {
                  {validate_mines_mines}
                  "Number of Mines")
         )
+        (@subcommand video_poker =>
+            (about: "Video Poker")
+        )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
         (@arg nonce: +required "Nonce (positive integer)")
@@ -106,6 +109,7 @@ fn main() {
             let mines: u8 = value_t!(sub_matches, "mines", u8).unwrap_or_else(|e| e.exit());
             mines::simulate(config, mines).to_string()
         }
+        ("video_poker", _) => video_poker::simulate(config).to_string(),
         _ => die("This branch should never execute. Unimplemented game?"),
     };
     println!("{}", res);
