@@ -38,6 +38,16 @@ struct PlinkoOpts {
     risk: String,
 }
 
+fn default_keno_mines() -> i32 {
+    3
+}
+
+#[derive(Deserialize)]
+struct KenoOpts {
+    #[serde(default = "default_keno_mines")]
+    mines: i32,
+}
+
 #[wasm_bindgen]
 pub fn simulate(
     game: &str,
@@ -61,6 +71,13 @@ pub fn simulate(
             let rows = opts.rows as u8;
             let risk = plinko::Risk::from_str(&opts.risk);
             let res = plinko::simulate(config, Some(plinko::Opts::new(rows, risk))).to_string();
+            // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
+            res
+        }
+        "mines" => {
+            let opts: KenoOpts = opts.into_serde().unwrap();
+            let mines = opts.mines as u8;
+            let res = mines::simulate(config, mines).to_string();
             // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
             res
         }
