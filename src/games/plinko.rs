@@ -30,6 +30,7 @@ impl fmt::Display for SimulationResult {
     }
 }
 
+#[derive(Debug)]
 pub enum Risk {
     Low,
     Medium,
@@ -92,7 +93,7 @@ pub fn simulate(config: ProvablyFairConfig, opts: Option<Opts>) -> SimulationRes
     }
     idx = idx / 2 - 1;
 
-    let payout = get_payout(opts.rows as usize, opts.risk, idx as usize);
+    let payout = slot_payout(opts.rows as usize, &opts.risk, idx as usize);
 
     SimulationResult {
         payout,
@@ -105,7 +106,7 @@ static PAYOUT_8: [[f64; 5]; 3] = [
     // low risk
     [5.6, 2.1, 1.1, 1., 0.5],
     // medium risk
-    [13., 3., 1.3, 0.7, 1.4],
+    [13., 3., 1.3, 0.7, 0.4],
     // high risk
     [29., 4., 1.5, 0.3, 0.2],
 ];
@@ -174,12 +175,13 @@ static PAYOUT_16: [[f64; 9]; 3] = [
     [1000., 130., 26., 9., 4., 2., 0.2, 0.2, 0.2],
 ];
 
-fn get_payout(rows: usize, risk: Risk, slot_index: usize) -> f64 {
+fn slot_payout(rows: usize, risk: &Risk, slot_index: usize) -> f64 {
     let risk_idx = match risk {
         Risk::Low => 0,
         Risk::Medium => 1,
         Risk::High => 2,
     };
+
     let payout_row = match rows {
         8 => &PAYOUT_8[risk_idx][..],
         9 => &PAYOUT_9[risk_idx][..],
@@ -193,7 +195,8 @@ fn get_payout(rows: usize, risk: Risk, slot_index: usize) -> f64 {
         _ => panic!("rows ({}) must be between 8 and 16 inclusive", rows),
     };
 
-    let len = payout_row.len();
+    let slot_index = slot_index as i32;
+    let len = payout_row.len() as i32;
     let last_idx = len - 1;
     // Passed the last payout in the array, we go from right to left because the payouts are
     // symmetric.
@@ -204,11 +207,10 @@ fn get_payout(rows: usize, risk: Risk, slot_index: usize) -> f64 {
         // Whereas for 9 rows, payout row is (0.7 is repeated):
         // 5.6, 2, 1.6, 1, 0.7, 0.7, 1, 1.6, 2, 5.6
         let repeat = if rows % 2 == 0 { 0 } else { 1 };
-
         last_idx - (slot_index - last_idx) + repeat
     } else {
         slot_index
-    };
+    } as usize;
     payout_row[index]
 }
 
@@ -230,11 +232,27 @@ fn slot_probability(rows: usize, slot_index: usize) -> f64 {
 
     let n = rows as f64;
     let k = slot_index;
-    let binom = num_integer::binomial(8, k) as f64;
+    let binom = num_integer::binomial(rows, k) as f64;
     let k = k as f64;
 
     let prob = binom as f64 * p.powf(k) * (1. - p).powf(n - k);
     prob
+}
+
+fn compute_expected_value(rows: usize, risk: &Risk) -> f64 {
+    let total_slots = rows + 1;
+    (0..total_slots).fold(0., |acc, idx| {
+        let payout = slot_payout(rows, risk, idx);
+        let probability = slot_probability(rows, idx);
+        /*
+        println!(
+            "({}, {:?}, {}) payout: {} probability: {}",
+            rows, risk, idx, payout, probability
+        );
+        */
+        let expected = payout * probability;
+        acc + expected
+    })
 }
 
 #[cfg(test)]
@@ -255,6 +273,34 @@ mod test {
         assert_eq!(simulate(config, Some(Opts::new(9, Risk::Low))).index, 3);
         let config = ProvablyFairConfig::new("client seed", "server seed", 3);
         assert_eq!(simulate(config, Some(Opts::new(9, Risk::Low))).index, 6);
+    }
+
+    /*
+    #[test]
+    fn test_expected_values_once() {
+        let rows = 9;
+        let risk = Risk::Low;
+        let expected_value = compute_expected_value(rows, &risk);
+        println!(
+            "Expected value: {:.2}% House Edge: {:.2}% (rows: {}, risk: {:?})",
+            expected_value * 100.,
+            (1. - expected_value) * 100.,
+            rows,
+            risk
+        );
+    }
+    */
+    #[test]
+    fn test_expected_values() {
+        let possible_rows: &[usize] = &[8, 9, 10, 11, 12, 13, 14, 15, 16];
+        let possible_risks: &[Risk] = &[Risk::Low, Risk::Medium, Risk::High];
+        for &rows in possible_rows {
+            for risk in possible_risks {
+                let expected_value = compute_expected_value(rows, risk);
+                let house_edge = (1. - expected_value) * 100.;
+                assert!(house_edge > 0.8 && house_edge < 1.2);
+            }
+        }
     }
 
     #[test]
@@ -302,6 +348,14 @@ mod test {
         assert_eq!(
             simulate(
                 ProvablyFairConfig::new("client seed", "server seed", 1),
+                Some(Opts::new(9, Risk::Low))
+            )
+            .payout,
+            2.
+        );
+        assert_eq!(
+            simulate(
+                ProvablyFairConfig::new("client seed", "server seed", 1),
                 Some(Opts::new(9, Risk::Medium))
             )
             .payout,
@@ -332,7 +386,7 @@ mod test {
         assert_eq!(num_integer::binomial(52, 5), 2_598_960);
     }
     #[test]
-    fn test_slot_probabily() {
+    fn test_slot_probability() {
         assert_eq!(slot_probability(8, 0), 0.00390625);
         assert_eq!(slot_probability(8, 1), 0.03125);
         assert_eq!(slot_probability(8, 2), 0.109375);
@@ -342,5 +396,16 @@ mod test {
         assert_eq!(slot_probability(8, 6), 0.109375);
         assert_eq!(slot_probability(8, 7), 0.03125);
         assert_eq!(slot_probability(8, 8), 0.00390625);
+
+        assert_eq!(slot_probability(9, 0), 0.001953125);
+        assert_eq!(slot_probability(9, 1), 0.017578125);
+        assert_eq!(slot_probability(9, 2), 0.0703125);
+        assert_eq!(slot_probability(9, 3), 0.1640625);
+        assert_eq!(slot_probability(9, 4), 0.24609375);
+        assert_eq!(slot_probability(9, 5), 0.24609375);
+        assert_eq!(slot_probability(9, 6), 0.1640625);
+        assert_eq!(slot_probability(9, 7), 0.0703125);
+        assert_eq!(slot_probability(9, 8), 0.017578125);
+        assert_eq!(slot_probability(9, 9), 0.001953125);
     }
 }
