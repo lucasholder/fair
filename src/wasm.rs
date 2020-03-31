@@ -1,4 +1,8 @@
+use crate::games::*;
+use crate::ProvablyFairConfig;
 use wasm_bindgen::prelude::*;
+
+use serde::Deserialize;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -18,9 +22,48 @@ pub fn greet() {
 }
 */
 
-/*
-#[wasm_bindgen]
-pub fn simulate(game: &str, client_seed: &str, server_seed: &str, nonce: u64) -> String {
-    crate::simulate(game, client_seed, server_seed, nonce, None as Option<()>).unwrap_or_default()
+fn default_plinko_risk() -> String {
+    "low".to_string()
 }
-*/
+
+fn default_plinko_rows() -> i32 {
+    8
+}
+
+#[derive(Deserialize)]
+struct PlinkoOpts {
+    #[serde(default = "default_plinko_rows")]
+    rows: i32,
+    #[serde(default = "default_plinko_risk")]
+    risk: String,
+}
+
+#[wasm_bindgen]
+pub fn simulate(
+    game: &str,
+    client_seed: &str,
+    server_seed: &str,
+    nonce: u32,
+    opts: &JsValue,
+) -> String {
+    let config = ProvablyFairConfig::new(client_seed, server_seed, nonce as u64);
+    let result = match game {
+        "baccarat" => baccarat::simulate(config).to_string(),
+        "dice" => dice::simulate(config).to_string(),
+        "limbo" => limbo::simulate(config).to_string(),
+        "hilo" => hilo::simulate(config).to_string(),
+        "blackjack" => blackjack::simulate(config).to_string(),
+        "diamond_poker" => diamond_poker::simulate(config).to_string(),
+        "roulette" => roulette::simulate(config).to_string(),
+        "plinko" => {
+            let opts: PlinkoOpts = opts.into_serde().unwrap();
+            let rows = opts.rows as u8;
+            let risk = plinko::Risk::from_str(&opts.risk);
+            let res = plinko::simulate(config, Some(plinko::Opts::new(rows, risk))).to_string();
+            // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
+            res
+        }
+        _ => panic!("This branch should never execute. Unimplemented game?"),
+    };
+    result
+}

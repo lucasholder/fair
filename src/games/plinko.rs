@@ -30,11 +30,21 @@ impl fmt::Display for SimulationResult {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum Risk {
     Low,
     Medium,
     High,
+}
+impl Risk {
+    pub fn from_str(s: &str) -> Risk {
+        match &s.to_lowercase()[..] {
+            "low" => Risk::Low,
+            "medium" => Risk::Medium,
+            "high" => Risk::High,
+            _ => panic!("invalid risk string {}", s),
+        }
+    }
 }
 
 pub struct Opts {
