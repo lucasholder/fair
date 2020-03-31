@@ -47,6 +47,9 @@ fn main() {
                  {validate_plinko_rows}
                  "Rows")
         )
+        (@subcommand keno =>
+            (about: "Keno")
+        )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
         (@arg nonce: +required "Nonce (positive integer)")
@@ -91,6 +94,7 @@ fn main() {
             let opts = plinko::Opts::new(rows, risk);
             plinko::simulate(config, Some(opts)).to_string()
         }
+        ("keno", _) => keno::simulate(config).to_string(),
         _ => die("This branch should never execute. Unimplemented game?"),
     };
     println!("{}", res);

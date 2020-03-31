@@ -70,7 +70,7 @@ Work In Progress... more game support coming!
 - [x] Limbo
 - [x] Plinko
 - [x] Roulette Roll
-- [ ] Keno
+- [x] Keno
 - [ ] Mines
 - [ ] Video Poker
 - [ ] Wheel

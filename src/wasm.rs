@@ -55,6 +55,7 @@ pub fn simulate(
         "blackjack" => blackjack::simulate(config).to_string(),
         "diamond_poker" => diamond_poker::simulate(config).to_string(),
         "roulette" => roulette::simulate(config).to_string(),
+        "keno" => keno::simulate(config).to_string(),
         "plinko" => {
             let opts: PlinkoOpts = opts.into_serde().unwrap();
             let rows = opts.rows as u8;
