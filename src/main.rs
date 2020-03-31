@@ -31,6 +31,9 @@ fn main() {
         (@subcommand diamond_poker =>
             (about: "Diamond poker")
         )
+        (@subcommand roulette =>
+            (about: "Roulette")
+        )
         (@subcommand plinko =>
             (about: "Plinko game")
             (@arg risk: --risk +takes_value
@@ -73,6 +76,7 @@ fn main() {
         ("hilo", _) => hilo::simulate(config).to_string(),
         ("blackjack", _) => blackjack::simulate(config).to_string(),
         ("diamond_poker", _) => diamond_poker::simulate(config).to_string(),
+        ("roulette", _) => roulette::simulate(config).to_string(),
         ("plinko", Some(sub_matches)) => {
             let rows: u8 = value_t!(sub_matches, "rows", u8).unwrap_or_else(|e| e.exit());
             let risk = sub_matches.value_of("risk").unwrap_or("low");
