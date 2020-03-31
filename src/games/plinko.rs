@@ -12,139 +12,11 @@ to the following index:
 // Index of 0 to 1 : left to right
 const DIRECTIONS = [ left, right ];
 // Game event translation
-const direction = CARDS[Math.floor(float * 2)]; */
+const direction = CARDS[Math.floor(float * 2)];
+*/
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
-use std::cmp;
-use std::collections::HashMap;
 use std::fmt;
-
-static GEM_ORDER: [Gem; 7] = [Green, Purple, Yellow, Red, Cyan, Orange, Blue];
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Gem {
-    Green,
-    Purple,
-    Yellow,
-    Red,
-    Cyan,
-    Orange,
-    Blue,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Outcome {
-    PlayerWin,
-    DealerWin,
-    Draw,
-}
-
-impl fmt::Display for Outcome {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::PlayerWin => "Player Wins",
-                Self::DealerWin => "Dealer Wins",
-                Self::Draw => "Draw",
-            }
-        )
-    }
-}
-
-use Gem::*;
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct Hand {
-    gems: Vec<Gem>,
-    hand_type: HandType,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-enum HandType {
-    Nothing,
-    Pair,
-    TwoPairs,
-    ThreeOfAKind,
-    FullHouse,
-    FourOfAKind, // TODO: 5 of a kind??
-}
-
-impl HandType {
-    fn to_ranking(&self) -> usize {
-        match self {
-            Nothing => 0,
-            Pair => 1,
-            TwoPairs => 2,
-            ThreeOfAKind => 3,
-            FullHouse => 4,
-            FourOfAKind => 5,
-        }
-    }
-}
-
-impl fmt::Display for HandType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
-        write!(
-            f,
-            "{}",
-            match self {
-                Nothing => "Nothing",
-                Pair => "Pair",
-                TwoPairs => "2 Pairs",
-                ThreeOfAKind => "3 Of A Kind",
-                FullHouse => "Full House",
-                FourOfAKind => "4 Of A Kind",
-            }
-        )
-    }
-}
-
-use HandType::*;
-
-impl Hand {
-    fn new() -> Hand {
-        Hand {
-            gems: Vec::with_capacity(5),
-            hand_type: Nothing,
-        }
-    }
-
-    fn analyze(&mut self) {
-        let count = self.gems.iter().fold(HashMap::new(), |mut acc, gem| {
-            *acc.entry(gem).or_insert(0) += 1;
-            acc
-        });
-        let pair_count = count.iter().filter(|(_, &val)| val == 2).count();
-        let triple_count = count.iter().filter(|(_, &val)| val == 3).count();
-        let quadruple_count = count.iter().filter(|(_, &val)| val >= 4).count();
-
-        let hand_type = if quadruple_count == 1 {
-            FourOfAKind
-        } else if pair_count == 1 && triple_count == 1 {
-            FullHouse
-        } else if triple_count == 1 {
-            ThreeOfAKind
-        } else if pair_count == 2 {
-            TwoPairs
-        } else if pair_count == 1 {
-            Pair
-        } else {
-            Nothing
-        };
-        self.hand_type = hand_type;
-    }
-}
-
-impl fmt::Display for Hand {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // write!(f, "dealer: {}\nplayer: {}", self.dealer, self.player)
-        write!(f, "{:?}", self.gems)
-    }
-}
 
 #[derive(Debug)]
 pub struct SimulationResult {
@@ -154,27 +26,8 @@ pub struct SimulationResult {
 
 impl fmt::Display for SimulationResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.payout)
+        write!(f, "Slot: {}\nPayout: {}x", self.index + 1, self.payout)
     }
-}
-
-// TODO: refactor player/dealer arrays into a Hand struct which implements partial eq? so we can do
-// let winner = match cmp::sasldfjasf(playerHand, dealerHand) { case cmp::Greater => Winner::Player
-// ...} etc.
-/*
-fn evaluate_hand(hand: &[Gem; 5]) -> u32 {
-    // give a score to a hand...
-}
-*/
-
-fn draw_hand(rng: &mut ProvablyFairRNG<f64>) -> Hand {
-    let mut hand = Hand::new();
-    for _ in 0..5 {
-        let idx = (rng.next().unwrap() * 7.) as usize;
-        hand.gems.push(GEM_ORDER[idx]);
-    }
-    hand.analyze();
-    hand
 }
 
 pub enum Risk {
@@ -339,9 +192,6 @@ fn get_payout(rows: usize, risk: Risk, slot_index: usize) -> f64 {
         16 => &PAYOUT_16[risk_idx][..],
         _ => panic!("rows ({}) must be between 8 and 16 inclusive", rows),
     };
-
-    println!("slot index: {:?}", slot_index);
-    println!("payout row {}: {:?}", rows, payout_row);
 
     let len = payout_row.len();
     let last_idx = len - 1;
