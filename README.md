@@ -24,13 +24,13 @@ cargo install fair
 ## Usage
 
 ```bash
-fair <game> <client_seed> <server_seed> <nonce>
+fair <client_seed> <server_seed> <nonce> <game>
 ```
 
 Example usage:
 
 ```bash
-$ fair baccarat "client seed" "server seed" 2
+$ fair "client seed" "server seed" 2 baccarat
 Client seed: client seed
 Server seed: server seed
 Nonce: 2
@@ -39,6 +39,20 @@ Player won
 
 Player (9): ♦9 - ♦10
 Banker (7): ♥4 - ♦3
+
+$ fair plinko --help
+Plinko game
+
+USAGE:
+    fair <client_seed> <server_seed> <nonce> plinko [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+        --risk <risk>    Risk [possible values: low, medium, high]
+        --rows <rows>    Rows
 ```
 
 As expected, we get the same result as on
