@@ -53,7 +53,7 @@ Work In Progress... more game support coming!
 - [x] Diamond Poker
 - [x] Dice Roll
 - [x] Limbo
-- [ ] Plinko
+- [x] Plinko
 - [ ] Roulette Roll
 - [ ] Keno
 - [ ] Mines
