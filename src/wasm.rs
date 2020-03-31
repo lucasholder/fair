@@ -30,11 +30,27 @@ fn default_plinko_rows() -> i32 {
     8
 }
 
+fn default_wheel_segments() -> i32 {
+    10
+}
+
+fn default_wheel_risk() -> String {
+    "low".to_string()
+}
+
 #[derive(Deserialize)]
 struct PlinkoOpts {
     #[serde(default = "default_plinko_rows")]
     rows: i32,
     #[serde(default = "default_plinko_risk")]
+    risk: String,
+}
+
+#[derive(Deserialize)]
+struct WheelOpts {
+    #[serde(default = "default_wheel_segments")]
+    segments: i32,
+    #[serde(default = "default_wheel_risk")]
     risk: String,
 }
 
@@ -82,6 +98,13 @@ pub fn simulate(
             res
         }
         "video_poker" => video_poker::simulate(config).to_string(),
+        "wheel" => {
+            let opts: WheelOpts = opts.into_serde().unwrap();
+            let segments = opts.segments as u8;
+            let risk = wheel::Risk::from_str(&opts.risk);
+            let res = wheel::simulate(config, Some(wheel::Opts::new(segments, risk))).to_string();
+            res
+        }
         _ => panic!("This branch should never execute. Unimplemented game?"),
     };
     result

@@ -60,6 +60,23 @@ fn main() {
         (@subcommand video_poker =>
             (about: "Video Poker")
         )
+        (@subcommand wheel =>
+            (about: "Wheel game")
+            (@arg risk: --risk +takes_value
+                 default_value("low")
+                 possible_value[low]
+                 possible_value[medium]
+                 possible_value[high]
+                 "Risk")
+            (@arg segments: --segments +takes_value
+                 default_value("10")
+                 possible_value("10")
+                 possible_value("20")
+                 possible_value("30")
+                 possible_value("40")
+                 possible_value("50")
+                 "Segments")
+        )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
         (@arg nonce: +required "Nonce (positive integer)")
@@ -110,6 +127,13 @@ fn main() {
             mines::simulate(config, mines).to_string()
         }
         ("video_poker", _) => video_poker::simulate(config).to_string(),
+        ("wheel", Some(sub_matches)) => {
+            let segments: u8 = value_t!(sub_matches, "segments", u8).unwrap_or_else(|e| e.exit());
+            let risk = sub_matches.value_of("risk").unwrap_or("low");
+            let risk = wheel::Risk::from_str(risk);
+            let opts = wheel::Opts::new(segments, risk);
+            wheel::simulate(config, Some(opts)).to_string()
+        }
         _ => die("This branch should never execute. Unimplemented game?"),
     };
     println!("{}", res);

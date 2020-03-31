@@ -9,3 +9,4 @@ pub mod mines;
 pub mod plinko;
 pub mod roulette;
 pub mod video_poker;
+pub mod wheel;

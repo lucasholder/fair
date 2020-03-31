@@ -73,7 +73,7 @@ Work In Progress... more game support coming!
 - [x] Keno
 - [x] Mines
 - [x] Video Poker
-- [ ] Wheel
+- [x] Wheel
 - [ ] Slots
 - [ ] Crash
 
