@@ -14,8 +14,8 @@ main() {
     cross test --target $TARGET
     cross test --target $TARGET --release
 
-    cross run --target $TARGET -- "client seed" "server seed" 2 baccarat
-    cross run --target $TARGET --release -- "client seed" "server seed" 2 baccarat
+    cross run --target $TARGET -- baccarat "client seed" "server seed" 2
+    cross run --target $TARGET --release -- baccarat "client seed" "server seed" 2
 }
 
 # we don't run the "test phase" when doing deploys
