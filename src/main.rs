@@ -9,7 +9,7 @@ use fair::ProvablyFairConfig;
 
 // TODO: refactor so that client_seed, server_see and nonce required for all games except crash
 fn main() {
-    let matches = clap_app!(myapp =>
+    let app = clap_app!(myapp =>
         (name: crate_name!())
         (version: crate_version!())
         (author: crate_authors!())
@@ -134,8 +134,9 @@ fn main() {
                  {validate_hex}
                  "Game hash")
         )
-    )
-    .get_matches();
+    ).setting(clap::AppSettings::ArgRequiredElseHelp);
+
+    let matches = app.get_matches();
 
     let (game, maybe_sub_matches) = matches.subcommand();
     let sub_matches = maybe_sub_matches.unwrap();
