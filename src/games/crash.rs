@@ -83,6 +83,9 @@ impl Config {
     }
     pub fn for_stake() -> Config {
         // https://bitcointalk.org/index.php?topic=5162888.msg54134231#msg54134231
+        // e.g. game:
+        // https://stake.com/casino/games/crash?gameId=c4b5237d-1885-45ed-b1f4-6ade71e20991&modal=crash
+        // Game # 1,126,614, hash: 5844bf329a6334074778ab8a5f0960e24f9eec43f83bbd98ac0a9f8bcd87184e
         let hash_chain_tip =
             Hash::from_hex("78a9757d3be42b74a3f70239078ad9317125fe9ee630d5bdada46de963e56752");
         let block_hash =
@@ -108,7 +111,7 @@ impl HashChain {
     }
 
     fn compute_next_hash(&self) -> Hash {
-        Hash::new(Sha256::digest(&self.hash.value))
+        Hash::digest(&self.hash.to_hex())
     }
 }
 
@@ -137,7 +140,6 @@ impl fmt::Display for Outcome {
 }
 
 pub fn simulate(config: Config, game_hash: Hash) -> Outcome {
-    // TODO: verify game hash
     let key = game_hash.to_hex();
     let input = config.block_hash.to_hex();
     let mut mac = HmacSha256::new_varkey(key.as_bytes())
@@ -184,14 +186,13 @@ mod test {
         );
         assert_eq!(
             hash_chain[1].to_string(),
-            Hash::new(Sha256::digest(&hash_chain[0].value[..])).to_string()
+            Hash::digest(&hash_chain[0].to_hex()).to_string()
         );
         assert_eq!(
             hash_chain[2].to_string(),
-            Hash::new(Sha256::digest(&hash_chain[1].value[..])).to_string()
+            Hash::digest(&hash_chain[1].to_hex()).to_string()
         );
     }
-
     #[test]
     fn test_crash_simulate() {
         let hash_chain: Vec<_> = HashChain::new(Hash::digest("testing")).take(10).collect();
@@ -201,11 +202,12 @@ mod test {
         let game_hash = hash_chain[2];
         let config = Config::new(hash_chain_tip, block_hash, hash_chain.len());
         let outcome = simulate(config, game_hash);
-        assert_eq!(outcome.crash_point, 1.440106367685025);
+        println!("{}", game_hash);
+        assert_eq!(outcome.crash_point, 1.5992214910117746);
         assert!(verify_hash(config, game_hash));
         let bad_game_hash =
             Hash::from_hex("deadbeefe7c270724bd4851c020d489257fa79a70e694a9b5099375464348698");
-        assert!(!verify_hash(config, bad_game_hash), "bas_game_hash");
+        assert!(!verify_hash(config, bad_game_hash), "bad_game_hash");
         let last_game_hash = hash_chain_tip;
         assert!(verify_hash(config, last_game_hash), "last_game_hash")
     }
@@ -220,5 +222,16 @@ mod test {
         let game_hash =
             Hash::from_hex("deadbeefe7c270724bd4851c020d489257fa79a70e694a9b5099375464348698");
         assert_eq!(simulate(config, game_hash).crash_point, 1.2897005203687084);
+    }
+
+    #[test]
+    #[ignore] // too slow
+    fn test_crash_verify() {
+        let config = Config::for_stake();
+        let game_hash =
+            Hash::from_hex("5844bf329a6334074778ab8a5f0960e24f9eec43f83bbd98ac0a9f8bcd87184e");
+
+        assert_eq!(simulate(config, game_hash).crash_point, 2.3522275811778033);
+        assert!(verify_hash(config, game_hash));
     }
 }
