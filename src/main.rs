@@ -4,6 +4,9 @@ use std::process;
 use fair::games::*;
 use fair::ProvablyFairConfig;
 
+use hex;
+use sha2::{Digest, Sha256};
+
 // TODO: implement game as subcommands? cause plinko games has some additional parameters (e.g.
 // risk and rows)
 
@@ -154,7 +157,7 @@ fn main() {
                 if crash::verify_hash(config, game_hash) {
                     println!("Game hash is valid.");
                 } else {
-                    println!("!!! Game hash is INVALID !!!");
+                    die("!!! Game hash is INVALID !!!");
                 }
             } else {
                 println!("");
@@ -166,6 +169,10 @@ fn main() {
             let client_seed = sub_matches.value_of("client_seed").unwrap();
             let server_seed = sub_matches.value_of("server_seed").unwrap();
             // println!("{:?}", matches);
+
+            // println!("Hashed server seed: {}\n", hash);
+            let server_seed_hash = hex::encode(Sha256::digest(server_seed.as_bytes()));
+            println!("Hashed Server Seed: {}\n", server_seed_hash);
 
             // TODO: list supported games!
             // TODO use value_t! to parse game.. ensure game is in valid list of strings...
