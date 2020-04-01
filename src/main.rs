@@ -170,11 +170,6 @@ fn main() {
             // TODO use value_t! to parse game.. ensure game is in valid list of strings...
             let nonce: u64 = value_t!(sub_matches, "nonce", u64).unwrap_or_else(|e| e.exit());
             // println!("{:?}", matches);
-            println!("Client seed: {}", client_seed);
-            println!("Server seed: {}", server_seed);
-            println!("Nonce: {}", nonce);
-            println!("");
-
             let config = ProvablyFairConfig::new(client_seed, server_seed, nonce);
             let res = match game {
                 "baccarat" => baccarat::simulate(config).to_string(),
