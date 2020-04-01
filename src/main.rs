@@ -75,6 +75,9 @@ fn main() {
         )
         (@subcommand keno =>
             (about: "Keno")
+            (@arg client_seed: +required "Client seed")
+            (@arg server_seed: +required "Server seed")
+            (@arg nonce: +required "Nonce (positive integer)")
         )
         (@subcommand mines =>
             (about: "Mines game")
