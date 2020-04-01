@@ -9,7 +9,12 @@ CLI tool and library for verifying provably fair games. Compatible with Stake's 
 
 ## Install
 
-On Mac or Linux:
+Pre-build binaries for Linux, macOS and Windows are available in
+[release](https://github.com/lucasholder/fair/releases).
+
+Remember to put it in your `$PATH` (e.g. `mv ~/Downloads/fair /usr/local/bin/fair`).
+
+On Mac or Linux you can use this install script:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/lucasholder/fair/master/install.sh | sh
