@@ -1,5 +1,6 @@
 pub mod baccarat;
 pub mod blackjack;
+pub mod crash;
 pub mod diamond_poker;
 pub mod dice;
 pub mod hilo;

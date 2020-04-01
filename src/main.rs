@@ -7,6 +7,7 @@ use fair::ProvablyFairConfig;
 // TODO: implement game as subcommands? cause plinko games has some additional parameters (e.g.
 // risk and rows)
 
+// TODO: refactor so that client_seed, server_see and nonce required for all games except crash
 fn main() {
     let matches = clap_app!(myapp =>
         (name: crate_name!())
@@ -82,6 +83,13 @@ fn main() {
                  default_value("0")
                  "Round #")
         )
+        (@subcommand crash =>
+            (about: "Crash game (uses Stake.com's parameters). Does not use client/server seed and nonce arguments.")
+            (@arg verify: --verify "Verify whether the hash is valid (can be slow)")
+            (@arg game_hash: +required
+                 {validate_hex}
+                 "Game hash")
+        )
         (@arg client_seed: +required "Client seed")
         (@arg server_seed: +required "Server seed")
         (@arg nonce: +required "Nonce (positive integer)")
@@ -143,6 +151,26 @@ fn main() {
             let round: usize = value_t!(sub_matches, "round", usize).unwrap_or_else(|e| e.exit());
             slots::simulate(config, round).to_string()
         }
+        ("crash", Some(sub_matches)) => {
+            // TODO: ensure game_hash is valid hex with hex::decode
+            let game_hash = sub_matches.value_of("game_hash").unwrap();
+
+            let game_hash = crash::Hash::from_hex(game_hash);
+            let config = crash::Config::for_stake();
+            println!("{}", crash::simulate(config, game_hash));
+            if sub_matches.is_present("verify") {
+                println!("\nVerifying game hash, this could take a while...\n");
+                if crash::verify_hash(config, game_hash) {
+                    println!("Game hash is valid.");
+                } else {
+                    println!("!!! Game hash is INVALID !!!");
+                }
+            } else {
+                println!("");
+                println!("IMPORTANT: use --verify to verify the game hash is valid");
+            }
+            "".to_string()
+        }
         _ => die("This branch should never execute. Unimplemented game?"),
     };
     println!("{}", res);
@@ -163,6 +191,15 @@ fn validate_mines_mines(mines: String) -> std::result::Result<(), String> {
         Ok(())
     } else {
         Err("must be between 1 to 24 inclusive".to_string())
+    }
+}
+fn validate_hex(hex: String) -> std::result::Result<(), String> {
+    if hex.len() != 64 {
+        return Err("must be 64 characters hexadecimal".to_string());
+    }
+    match hex::decode(hex) {
+        Ok(_) => Ok(()),
+        _ => Err("must be valid hexadecimal".to_string()),
     }
 }
 

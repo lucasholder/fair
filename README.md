@@ -75,7 +75,7 @@ Work In Progress... more game support coming!
 - [x] Video Poker
 - [x] Wheel
 - [x] Slots
-- [ ] Crash
+- [x] Crash
 
 ## Rust API docs
 
