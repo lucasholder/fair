@@ -21,10 +21,10 @@ If you have Rust:
 cargo install fair
 ```
 
-## Example
+## Examples
 
 ```bash
-$ fair baccarat "client seed" "server seed" 1  master ✗
+$ fair baccarat "client seed" "server seed" 1
 Client seed: client seed
 Server seed: server seed
 Nonce: 1
@@ -33,6 +33,18 @@ Player won
 
 Player (9): ♠J - ♥10 - ♥9
 Banker (5): ♥5 - ♣K
+```
+
+```bash
+$ fair mines "client seed" "server seed" 1
+Squares: [18, 15, 5]
+
+
+💠       💠      💠      💠      💠
+💣       💠      💠      💠      💠
+💠       💠      💠      💠      💠
+💣       💠      💠      💣      💠
+💠       💠      💠      💠      💠
 ```
 
 ## Usage
