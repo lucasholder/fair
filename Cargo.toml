@@ -1,6 +1,6 @@
 [package]
 name = "fair"
-version = "0.0.9-alpha.0"
+version = "0.0.9"
 authors = ["Lucas Holder <lucasholderx@gmail.com>"]
 edition = "2018"
 description = "CLI tool and library for verifying provably fair games (baccarat, etc.)."
