@@ -14,29 +14,29 @@ impl fmt::Display for SimulationResult {
         write!(f, "{}", self.outcome)
     }
 }
-/// Simulates a game of dice.
-///
-/// # Example
-///
-/// ```
-/// use fair::{games, ProvablyFairConfig};
-///
-/// let config = ProvablyFairConfig::new("some client seed", "some server seed", 1);
-/// let result = games::limbo::simulate(config);
-/// ```
-///
+
 pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
     let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::from_config(config);
 
-    let float = rng.next().unwrap();
-    // Game event translation with houseEdge of 0.99 (1%)
+    let m = 1e8;
     let house_edge = 0.99;
-    let max_multiplier = 10_000_000_f64;
-    let float_point = float * max_multiplier;
-    let float_point = max_multiplier / float_point * house_edge;
 
-    // Crash point rounded down to required denominator
-    let crash_point = ((float_point * 100_f64) as u32) as f64 / 100_f64;
+    // Documentation on Stake is wrong! It says:
+    //
+    // const floatPoint = 1e8 / (float * 1e8) * houseEdge;
+    //
+    // but the correct JS formula actually is:
+    //
+    // const floatPoint = 1e8 / (Math.floor(float * 1e8) + 1) * houseEdge;
+    //
+    // Found by reverse engineering the client side JavaScript verification source code.
+
+    let float = rng.next().unwrap();
+
+    let crash_point = m / ((float * m).floor() + 1.) * house_edge;
+
+    // Round to 2 decimals
+    let crash_point = (crash_point * 100.).floor() / 100.;
 
     let outcome = crash_point;
     SimulationResult { outcome }
@@ -47,7 +47,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn simulate_dice_roll() {
+    fn test_limbo() {
         let config = ProvablyFairConfig::new("client seed", "server seed", 1);
         let result = simulate(config);
         // println!("{:?}", result);
@@ -60,5 +60,17 @@ mod test {
         let result = simulate(config);
         // println!("{:?}", result);
         assert_eq!(result.outcome, 4.28);
+    }
+
+    #[test]
+    fn test_limbo_bug_when_tiny_float() {
+        // https://stake.com/provably-fair/calculation?clientSeed=83e27f682128eb1852b048203dfd6931&game=limbo&nonce=1942124&serverSeed=e8df2cc3b9ccb583ce5ea92336842387
+        let config = ProvablyFairConfig::new(
+            "83e27f682128eb1852b048203dfd6931",
+            "e8df2cc3b9ccb583ce5ea92336842387",
+            1942124,
+        );
+        let result = simulate(config);
+        assert_eq!(result.outcome, 3807692.3);
     }
 }

@@ -148,15 +148,13 @@ impl std::iter::Iterator for ProvablyFairRNG<u8> {
 
 // technique for converting groups of bytes into a float
 fn bytes_to_float(bytes: &[u8]) -> f64 {
-    bytes
-        .iter()
-        .fold((0., 0), |(result, i), value| {
-            let value = *value as f64;
-            let divider: u64 = 256_u64.pow(i + 1);
-            let partial_result = value / divider as f64;
-            (result + partial_result, i + 1)
-        })
-        .0
+    let (float, _) = bytes.iter().fold((0., 0.), |(result, i), &value| {
+        let value = value as f64;
+        let divider = 256_f64.powf(i + 1.);
+        let partial_result = value / divider as f64;
+        (result + partial_result, i + 1.)
+    });
+    float
 }
 
 // TODO: use that function everywhere we are picking a number in a range
@@ -212,5 +210,14 @@ mod test {
             // println!("{} == {} ?", actual.unwrap(), val);
             assert_eq!(actual, Some(val));
         }
+    }
+
+    #[test]
+    fn test_rng_float_starts_with_0() {
+        let client_seed = "83e27f682128eb1852b048203dfd6931";
+        let server_seed = "e8df2cc3b9ccb583ce5ea92336842387";
+        let nonce = 1942124;
+        let mut rng: ProvablyFairRNG<f64> = ProvablyFairRNG::new(client_seed, server_seed, nonce);
+        assert_eq!(rng.next().unwrap(), 0.00000025122426450252533);
     }
 }
