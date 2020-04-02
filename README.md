@@ -30,9 +30,7 @@ cargo install fair
 
 ```bash
 $ fair baccarat "client seed" "server seed" 1
-Client seed: client seed
-Server seed: server seed
-Nonce: 1
+Hashed Server Seed: a4e53dc2f480b8fce6fe688b1317658b446299df23ad533394406427c8c19557
 
 Player won
 
@@ -42,6 +40,8 @@ Banker (5): ♥5 - ♣K
 
 ```bash
 $ fair mines "client seed" "server seed" 1
+Hashed Server Seed: a4e53dc2f480b8fce6fe688b1317658b446299df23ad533394406427c8c19557
+
 Squares: [18, 15, 5]
 
 
@@ -56,7 +56,7 @@ Squares: [18, 15, 5]
 
 ```bash
 $ fair --help
-fair 0.0.5-alpha.0
+fair 0.0.13
 Lucas Holder <lucasholderx@gmail.com>
 CLI tool and library for verifying provably fair games (baccarat, etc.).
 
@@ -70,7 +70,7 @@ FLAGS:
 SUBCOMMANDS:
     baccarat         Baccarat game
     blackjack        Blackjack
-    crash            Crash game (uses Stake.com's parameters). Does not use client/server seed and nonce arguments.
+    crash            Crash game (uses Stake.com's parameters).
     diamond_poker    Diamond poker
     dice             Dice game
     help             Prints this message or the help of the given subcommand(s)
@@ -83,7 +83,6 @@ SUBCOMMANDS:
     slots            Slots game(s)
     video_poker      Video Poker
     wheel            Wheel game
-
 ```
 
 As expected, we get the same result as on
