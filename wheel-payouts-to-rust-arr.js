@@ -1,5 +1,6 @@
 // Taken from https://stake.com/provably-fair/game-events
 
+// on stake, this is queries with graphql
 const PAYOUTS = {
   "10": {
     low: [1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0],
