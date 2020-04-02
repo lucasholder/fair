@@ -1,5 +1,8 @@
 // Taken from https://stake.com/provably-fair/game-events
 
+// TODO: use this script for plinko payouts as well:
+// [{"operationName":"plinkoPayouts","variables":{},"query":"query plinkoPayouts {\n  info {\n    plinkoPayouts {\n      payouts\n      rows\n      risk\n      __typename\n    }\n    __typename\n  }\n}\n"}]
+
 // on stake, this is queries with graphql
 const PAYOUTS = {
   "10": {
