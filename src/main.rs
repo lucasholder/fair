@@ -131,13 +131,14 @@ fn main() {
                  "Round #")
         )
         (@subcommand crash =>
-            (about: "Crash game (uses Stake.com's parameters). Does not use client/server seed and nonce arguments.")
+            (about: "Crash game (uses Stake.com's parameters).")
             (@arg verify: --verify "Verify whether the hash is valid (can be slow)")
             (@arg game_hash: +required
                  {validate_hex}
                  "Game hash")
         )
-    ).setting(clap::AppSettings::ArgRequiredElseHelp);
+    )
+    .setting(clap::AppSettings::ArgRequiredElseHelp);
 
     let matches = app.get_matches();
 
