@@ -129,7 +129,7 @@ dependencies = [
 
 [[package]]
 name = "fair"
-version = "0.0.13"
+version = "0.0.14-alpha.0"
 dependencies = [
  "bencher",
  "clap",
