@@ -31,9 +31,11 @@ pub fn simulate(config: ProvablyFairConfig) -> SimulationResult {
     //
     // Found by reverse engineering the client side JavaScript verification source code.
 
-    let float = rng.next().unwrap();
+    // let float = rng.next().unwrap();
+    // let crash_point = m / ((float * m).floor() + 1.) * house_edge;
 
-    let crash_point = m / ((float * m).floor() + 1.) * house_edge;
+    let n = rng.range(1, m as usize + 1) as f64;
+    let crash_point = m / n * house_edge;
 
     // Round to 2 decimals
     let crash_point = (crash_point * 100.).floor() / 100.;
