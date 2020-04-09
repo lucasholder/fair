@@ -1,26 +1,45 @@
 import * as wasm from "../pkg/index.js";
 
+export const gameTypes = {
+  SINGLEPLAYER: "SINGLEPLAYER",
+  MULTIPLAYER: "MULTIPLAYER",
+};
+
+const { SINGLEPLAYER, MULTIPLAYER } = gameTypes;
+
 export const allGames = [
-  ["Baccarat", "baccarat"],
-  ["Blackjack", "blackjack"],
-  ["Crash", "crash"],
-  ["Diamond Poker", "diamond_poker"],
-  ["Dice", "dice"],
-  ["Hilo", "hilo"],
-  ["Keno", "keno"],
-  ["Limbo", "limbo"],
-  ["Mines", "mines"],
-  ["Plinko", "plinko"],
-  ["Roulette", "roulette"],
-  ["Slots", "slots"],
-  ["Video Poker", "video_poker"],
-  ["Wheel", "wheel"],
+  { id: "baccarat", displayName: "Baccarat", type: SINGLEPLAYER },
+  { id: "blackjack", displayName: "Blackjack", type: SINGLEPLAYER },
+  { id: "crash", displayName: "Crash", type: MULTIPLAYER },
+  { id: "diamond_poker", displayName: "Diamond", type: SINGLEPLAYER },
+  { id: "dice", displayName: "Dice", type: SINGLEPLAYER },
+  { id: "hilo", displayName: "Hilo", type: SINGLEPLAYER },
+  { id: "keno", displayName: "Keno", type: SINGLEPLAYER },
+  { id: "limbo", displayName: "Limbo", type: SINGLEPLAYER },
+  { id: "mines", displayName: "Mines", type: SINGLEPLAYER },
+  { id: "plinko", displayName: "Plinko", type: SINGLEPLAYER },
+  { id: "roulette", displayName: "Roulette", type: SINGLEPLAYER },
+  { id: "slots", displayName: "Slots", type: SINGLEPLAYER },
+  { id: "video_poker", displayName: "Video Poker", type: SINGLEPLAYER },
+  { id: "wheel", displayName: "Wheel", type: SINGLEPLAYER },
 ];
 
-export function simulate(game, client_seed, server_seed, nonce, opts = {}) {
-  return wasm.simulate(game, client_seed, server_seed, nonce, opts);
+export function simulate(gameId, opts = {}) {
+  const { type } = allGames.find(({ id }) => id === gameId);
+
+  if (type === SINGLEPLAYER) {
+    return simulateSingleplayer(gameId, opts);
+  } else {
+    return simulateMultiplayer(gameId, opts);
+  }
 }
 
-export function simulate_multiplayer(game, game_hash, opts = {}) {
-  return wasm.simulate_multiplayer(game, game_hash, opts);
+export function simulateSingleplayer(gameId, opts = {}) {
+  const { clientSeed, serverSeed, nonce, ...otherOpts } = opts;
+  return wasm.simulate(gameId, clientSeed, serverSeed, nonce, otherOpts);
+}
+
+export function simulateMultiplayer(gameId, opts = {}) {
+  const { gameHash, ...otherOpts } = opts;
+  return wasm.simulate_multiplayer(gameId, gameHash, otherOpts);
 }
