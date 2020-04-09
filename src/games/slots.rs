@@ -9,10 +9,10 @@ numbers, until the case of a bonus round, where more are generated.
 */
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Debug)]
-
+#[derive(Debug, Serialize)]
 // There are 5 reels
 // One outcome per reel (an index into the reel's outcomesl)
 // First 4 reels have 30 possible outcomes

@@ -10,9 +10,10 @@ use crate::card::Card;
 use crate::card::Deck;
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
 
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     initial_hand: Deck,
     coming_cards: Deck,

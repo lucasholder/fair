@@ -81,47 +81,89 @@ pub fn simulate(
     server_seed: &str,
     nonce: u32,
     opts: &JsValue,
-) -> String {
+) -> JsValue {
     let config = ProvablyFairConfig::new(client_seed, server_seed, nonce as u64);
     let result = match game {
-        "baccarat" => baccarat::simulate(config).to_string(),
-        "dice" => dice::simulate(config).to_string(),
-        "limbo" => limbo::simulate(config).to_string(),
-        "hilo" => hilo::simulate(config).to_string(),
-        "blackjack" => blackjack::simulate(config).to_string(),
-        "diamond_poker" => diamond_poker::simulate(config).to_string(),
-        "roulette" => roulette::simulate(config).to_string(),
-        "keno" => keno::simulate(config).to_string(),
+        "baccarat" => {
+            let res = baccarat::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "dice" => {
+            let res = dice::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "limbo" => {
+            let res = limbo::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "hilo" => {
+            let res = hilo::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "blackjack" => {
+            let res = blackjack::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "diamond_poker" => {
+            let res = diamond_poker::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "roulette" => {
+            let res = roulette::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
+        "keno" => {
+            let res = keno::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
         "plinko" => {
             let opts: PlinkoOpts = opts.into_serde().unwrap();
             let rows = opts.rows as u8;
             let risk = plinko::Risk::from_str(&opts.risk);
-            let res = plinko::simulate(config, Some(plinko::Opts::new(rows, risk))).to_string();
+            let res = plinko::simulate(config, Some(plinko::Opts::new(rows, risk)));
             // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
-            res
+            JsValue::from_serde(&res).unwrap()
         }
         "mines" => {
             let opts: MinesOpts = opts.into_serde().unwrap();
             let mines = opts.mines as u8;
-            let res = mines::simulate(config, mines).to_string();
+            let res = mines::simulate(config, mines);
             // format!("Rows: {} Risk: {:?}\n{}", rows, risk, res)
-            res
+            JsValue::from_serde(&res).unwrap()
         }
-        "video_poker" => video_poker::simulate(config).to_string(),
+        "video_poker" => {
+            let res = video_poker::simulate(config);
+            JsValue::from_serde(&res).unwrap()
+        }
         "wheel" => {
             let opts: WheelOpts = opts.into_serde().unwrap();
             let segments = opts.segments as u8;
             let risk = wheel::Risk::from_str(&opts.risk);
-            let res = wheel::simulate(config, Some(wheel::Opts::new(segments, risk))).to_string();
-            res
+            let res = wheel::simulate(config, Some(wheel::Opts::new(segments, risk)));
+            JsValue::from_serde(&res).unwrap()
         }
         "slots" => {
             let opts: SlotsOpts = opts.into_serde().unwrap();
             let round = opts.round as usize;
-            let res = slots::simulate(config, round).to_string();
-            res
+            let res = slots::simulate(config, round);
+            JsValue::from_serde(&res).unwrap()
         }
-        _ => panic!("This branch should never execute. Unimplemented game?"),
+        _ => unimplemented!(),
+    };
+    result
+}
+
+#[wasm_bindgen]
+pub fn simulate_multiplayer(game: &str, game_hash: &str, _: JsValue) -> JsValue {
+    let game_hash = crash::Hash::from_hex(game_hash);
+    let config = crash::Config::for_stake();
+    let result = match game {
+        "crash" => {
+            // crash::verify_hash(config, game_hash)
+            let res = crash::simulate(config, game_hash);
+            JsValue::from_serde(&res).unwrap()
+        }
+        _ => unimplemented!(),
     };
     result
 }

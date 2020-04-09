@@ -14,9 +14,10 @@ generated. Between 1 and 24 game event results are used, based on the settings c
 */
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     pub squares: Vec<u8>,
 }

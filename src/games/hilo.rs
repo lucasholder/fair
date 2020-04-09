@@ -9,10 +9,11 @@ use std::error::Error; use std::fs;
 
 use crate::card::Deck;
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     deck: Deck,
 }

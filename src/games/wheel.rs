@@ -6,9 +6,10 @@ mod payouts;
 use payouts::*;
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     pub payout: f64,
     pub index: usize,
@@ -20,7 +21,7 @@ impl fmt::Display for SimulationResult {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub enum Risk {
     Low,
     Medium,

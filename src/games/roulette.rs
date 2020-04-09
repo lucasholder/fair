@@ -16,9 +16,10 @@ const pocket = POCKETS[Math.floor(float * 37)];
 */
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     pub pocket: u8,
 }

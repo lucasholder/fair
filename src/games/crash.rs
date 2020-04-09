@@ -33,6 +33,7 @@ Excited to show you all Crash very soon!
 */
 use hex;
 use hmac::{Hmac, Mac};
+use serde::Serialize;
 use sha2::digest::generic_array::typenum::*;
 use sha2::digest::generic_array::GenericArray;
 use sha2::{Digest, Sha256};
@@ -129,6 +130,7 @@ type HmacSha256 = Hmac<Sha256>;
 
 use std::convert::TryInto;
 
+#[derive(Serialize)]
 pub struct Outcome {
     crash_point: f64,
 }

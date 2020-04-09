@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::fmt;
 
 use crate::rng::ProvablyFairRNG;
@@ -10,7 +11,7 @@ pub const CARD_RANK_ORDER: &[CardRank; 13] = &[
 
 pub const CARD_SUITE_ORDER: &[CardSuite; 4] = &[DIAMOND, HEART, SPADE, CLUB];
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize)]
 pub enum CardRank {
     TWO,
     THREE,
@@ -61,7 +62,7 @@ impl fmt::Display for CardRank {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize)]
 pub enum CardSuite {
     DIAMOND,
     CLUB,
@@ -81,7 +82,7 @@ impl fmt::Display for CardSuite {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize)]
 pub struct Card {
     rank: CardRank,
     suite: CardSuite,
@@ -125,7 +126,7 @@ impl Card {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Deck {
     cards: Vec<Card>,
 }

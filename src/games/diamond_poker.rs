@@ -18,13 +18,14 @@
 */
 
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 use std::cmp;
 use std::collections::HashMap;
 use std::fmt;
 
 static GEM_ORDER: [Gem; 7] = [Green, Purple, Yellow, Red, Cyan, Orange, Blue];
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Serialize)]
 pub enum Gem {
     Green,
     Purple,
@@ -35,7 +36,7 @@ pub enum Gem {
     Blue,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize)]
 pub enum Outcome {
     PlayerWin,
     DealerWin,
@@ -59,13 +60,13 @@ impl fmt::Display for Outcome {
 
 use Gem::*;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct Hand {
     gems: Vec<Gem>,
     hand_type: HandType,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 enum HandType {
     Nothing,
     Pair,
@@ -149,7 +150,7 @@ impl fmt::Display for Hand {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     pub dealer: Hand,
     pub player: Hand,

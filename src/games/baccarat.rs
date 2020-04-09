@@ -9,12 +9,13 @@ use std::error::Error; use std::fs;
 
 use crate::card::Card;
 pub use crate::rng::{ProvablyFairConfig, ProvablyFairRNG};
+use serde::Serialize;
 
 use std::cmp::Ordering;
 use std::fmt;
 use BaccaratCardRecipient::*;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 enum Outcome {
     Banker,
     Player,
@@ -32,16 +33,16 @@ impl fmt::Display for Outcome {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 struct SimulationResultTotals {
     player: u32,
     banker: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 struct Step(BaccaratCardRecipient, Card);
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SimulationResult {
     outcome: Outcome,
     totals: SimulationResultTotals,
@@ -90,7 +91,7 @@ impl fmt::Display for SimulationResult {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 enum BaccaratCardRecipient {
     BANKER,
     PLAYER,
