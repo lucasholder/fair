@@ -2,13 +2,14 @@ use clap::*;
 use std::process;
 
 use fair::games::*;
+use fair::utils;
 use fair::ProvablyFairConfig;
 
 use hex;
-use sha2::{Digest, Sha256};
 
 // TODO: implement game as subcommands? cause plinko games has some additional parameters (e.g.
 // risk and rows)
+// TODO: add --json flag to output result as json
 
 // TODO: refactor so that client_seed, server_see and nonce required for all games except crash
 fn main() {
@@ -172,7 +173,7 @@ fn main() {
             // println!("{:?}", matches);
 
             // println!("Hashed server seed: {}\n", hash);
-            let server_seed_hash = hex::encode(Sha256::digest(server_seed.as_bytes()));
+            let server_seed_hash = utils::hash_server_seed(server_seed);
             println!("Hashed Server Seed: {}\n", server_seed_hash);
 
             // TODO: list supported games!

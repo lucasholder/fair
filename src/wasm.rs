@@ -2,6 +2,7 @@ use crate::games::*;
 use crate::ProvablyFairConfig;
 use wasm_bindgen::prelude::*;
 
+use crate::utils;
 use serde::Deserialize;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -166,4 +167,15 @@ pub fn simulate_multiplayer(game: &str, game_hash: &str, _: JsValue) -> JsValue 
         _ => unimplemented!(),
     };
     result
+}
+
+#[wasm_bindgen]
+pub fn verify_game_hash_stake(game_hash: &str) -> bool {
+    let config = crash::Config::for_stake();
+    return crash::verify_hash(config, crash::Hash::from_hex(game_hash));
+}
+
+#[wasm_bindgen]
+pub fn hash_server_seed(server_seed: &str) -> String {
+    utils::hash_server_seed(server_seed)
 }

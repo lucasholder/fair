@@ -16,12 +16,38 @@ export const allGames = [
   { id: "hilo", displayName: "Hilo", type: SINGLEPLAYER },
   { id: "keno", displayName: "Keno", type: SINGLEPLAYER },
   { id: "limbo", displayName: "Limbo", type: SINGLEPLAYER },
-  { id: "mines", displayName: "Mines", type: SINGLEPLAYER },
-  { id: "plinko", displayName: "Plinko", type: SINGLEPLAYER },
+  {
+    id: "mines",
+    displayName: "Mines",
+    type: SINGLEPLAYER,
+    defaultOpts: { mines: 3 },
+  },
+  {
+    id: "plinko",
+    displayName: "Plinko",
+    type: SINGLEPLAYER,
+    defaultOpts: {
+      rows: 8,
+      risk: "low",
+    },
+  },
   { id: "roulette", displayName: "Roulette", type: SINGLEPLAYER },
-  { id: "slots", displayName: "Slots", type: SINGLEPLAYER },
+  {
+    id: "slots",
+    displayName: "Slots",
+    type: SINGLEPLAYER,
+    defaultOpts: { round: 0 },
+  },
   { id: "video_poker", displayName: "Video Poker", type: SINGLEPLAYER },
-  { id: "wheel", displayName: "Wheel", type: SINGLEPLAYER },
+  {
+    id: "wheel",
+    displayName: "Wheel",
+    type: SINGLEPLAYER,
+    defaultOpts: {
+      risk: "low",
+      segments: 10,
+    },
+  },
 ];
 
 export function simulate(gameId, opts = {}) {
@@ -42,4 +68,12 @@ export function simulateSingleplayer(gameId, opts = {}) {
 export function simulateMultiplayer(gameId, opts = {}) {
   const { gameHash, ...otherOpts } = opts;
   return wasm.simulate_multiplayer(gameId, gameHash, otherOpts);
+}
+
+export function hashServerSeed(serverSeed) {
+  return wasm.hash_server_seed(serverSeed);
+}
+
+export function verifyGameHashStake(gameHash) {
+  return wasm.verify_game_hash_stake(gameHash);
 }

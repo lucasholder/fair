@@ -11,6 +11,7 @@ use std::error::Error; use std::fs;
 mod card;
 pub mod games;
 mod rng;
+pub mod utils;
 mod wasm;
 
 pub use rng::{ProvablyFairConfig, ProvablyFairRNG};
