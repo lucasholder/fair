@@ -11,7 +11,7 @@ export const allGames = [
   { id: "baccarat", displayName: "Baccarat", type: SINGLEPLAYER },
   { id: "blackjack", displayName: "Blackjack", type: SINGLEPLAYER },
   { id: "crash", displayName: "Crash", type: MULTIPLAYER },
-  { id: "diamond_poker", displayName: "Diamond", type: SINGLEPLAYER },
+  { id: "diamond_poker", displayName: "Diamond Poker", type: SINGLEPLAYER },
   { id: "dice", displayName: "Dice", type: SINGLEPLAYER },
   { id: "hilo", displayName: "Hilo", type: SINGLEPLAYER },
   { id: "keno", displayName: "Keno", type: SINGLEPLAYER },
