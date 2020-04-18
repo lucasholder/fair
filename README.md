@@ -7,6 +7,8 @@ CLI tool and library for verifying provably fair games. Compatible with Stake's 
 [![Build Status](https://travis-ci.org/lucasholder/fair.svg?branch=master)](https://travis-ci.org/lucasholder/fair)
 [![Build Status Appveyor](https://ci.appveyor.com/api/projects/status/github/lucasholder/fair)](https://ci.appveyor.com/project/lucasholder/fair)
 
+![screenshot](./screenshots/mines.png)
+
 ## Install
 
 Pre-built binaries for Linux, macOS and Windows are available in
