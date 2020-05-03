@@ -15,8 +15,8 @@ use std::cmp::Ordering;
 use std::fmt;
 use BaccaratCardRecipient::*;
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
-enum Outcome {
+#[derive(Debug, PartialEq, Eq, Serialize, Clone)]
+pub enum Outcome {
     Banker,
     Player,
     Tie,
@@ -25,28 +25,28 @@ enum Outcome {
 impl fmt::Display for Outcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
-            Outcome::Banker => "Banker won",
-            Outcome::Player => "Player won",
-            Outcome::Tie => "It's a tie",
+            Outcome::Banker => "banker",
+            Outcome::Player => "player",
+            Outcome::Tie => "tie",
         };
         write!(f, "{}", s)
     }
 }
 
-#[derive(Debug, Serialize)]
-struct SimulationResultTotals {
-    player: u32,
-    banker: u32,
+#[derive(Debug, Serialize, Clone)]
+pub struct SimulationResultTotals {
+    pub player: u32,
+    pub banker: u32,
 }
 
-#[derive(Debug, Serialize)]
-struct Step(BaccaratCardRecipient, Card);
+#[derive(Debug, Serialize, Clone)]
+pub struct Step(pub BaccaratCardRecipient, pub Card);
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct SimulationResult {
-    outcome: Outcome,
-    totals: SimulationResultTotals,
-    steps: Vec<Step>,
+    pub outcome: Outcome,
+    pub totals: SimulationResultTotals,
+    pub steps: Vec<Step>,
 }
 
 impl SimulationResult {
@@ -91,16 +91,16 @@ impl fmt::Display for SimulationResult {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
-enum BaccaratCardRecipient {
+#[derive(Debug, PartialEq, Eq, Serialize, Clone)]
+pub enum BaccaratCardRecipient {
     BANKER,
     PLAYER,
 }
 impl fmt::Display for BaccaratCardRecipient {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            BANKER => f.write_str("Banker"),
-            PLAYER => f.write_str("Player"),
+            BANKER => f.write_str("banker"),
+            PLAYER => f.write_str("player"),
         }
     }
 }
