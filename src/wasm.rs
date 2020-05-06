@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::games::*;
 use crate::ProvablyFairConfig;
 use wasm_bindgen::prelude::*;

@@ -225,19 +225,9 @@ fn slot_payout(rows: usize, risk: &Risk, slot_index: usize) -> f64 {
     payout_row[index]
 }
 
-fn fac(n: u32) -> u32 {
-    let mut i = n;
-    let mut res = 1;
-    while i > 0 {
-        res = res * i;
-        i -= 1;
-    }
-    res
-}
-
 use num_integer;
 
-fn slot_probability(rows: usize, slot_index: usize) -> f64 {
+pub fn slot_probability(rows: usize, slot_index: usize) -> f64 {
     // https://en.wikipedia.org/wiki/Bean_machine#Distribution_of_the_beads
     let p: f64 = 0.5;
 
@@ -250,7 +240,7 @@ fn slot_probability(rows: usize, slot_index: usize) -> f64 {
     prob
 }
 
-fn compute_expected_value(rows: usize, risk: &Risk) -> f64 {
+pub fn compute_expected_value(rows: usize, risk: &Risk) -> f64 {
     let total_slots = rows + 1;
     (0..total_slots).fold(0., |acc, idx| {
         let payout = slot_payout(rows, risk, idx);
@@ -380,12 +370,6 @@ mod test {
             .payout,
             1.4
         );
-    }
-    #[test]
-    fn test_fac() {
-        assert_eq!(fac(3), 6);
-        assert_eq!(fac(4), 24);
-        assert_eq!(fac(5), 120);
     }
     #[test]
     fn test_binomial_coefficient() {
